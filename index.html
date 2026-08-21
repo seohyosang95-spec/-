@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Studio Studio - Professional Visual Maker</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --panel-bg: #1e293b;
+      --accent-color: #38bdf8;
+      --accent-hover: #0284c7;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --border-color: #334155;
+      --danger-color: #ef4444;
+      --danger-hover: #dc2626;
+      --warning-color: #f59e0b;
+      --warning-hover: #d97706;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-color); color: var(--text-main); padding: 24px; min-height: 100vh; }
+    .app-container { display: flex; gap: 24px; max-width: 1400px; margin: 0 auto; height: calc(100vh - 48px); }
+    .sidebar { width: 380px; background: var(--panel-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+    .main-canvas-area { flex: 1; background: #020617; border-radius: 16px; border: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; position: relative; }
+    
+    h2 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin-bottom: 4px; }
+    .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-sub); margin-bottom: 8px; }
+    .field-group { background: rgba(15, 23, 42, 0.5); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+    
+    label { display: block; font-size: 12px; color: var(--text-main); margin-bottom: 6px; }
+    input[type="text"], textarea, select { width: 100%; padding: 8px 12px; background: #0f172a; border: 1px solid var(--border-color); border-radius: 6px; color: #fff; font-size: 13px; outline: none; }
+    input[type="text"]:focus, textarea:focus { border-color: var(--accent-color); }
+    .row { display: flex; gap: 8px; }
+    
+    button { padding: 10px 14px; background: var(--accent-color); color: #0f172a; border: none; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+    button.secondary { background: #334155; color: var(--text-main); }
+    button.secondary:hover { background: #475569; }
+    button.warning { background: var(--warning-color); color: #0f172a; }
+    button.warning:hover { background: var(--warning-hover); }
+    button.danger { background: var(--danger-color); color: #fff; }
+    button.danger:hover { background: var(--danger-hover); }
+    
+    .sample-imgs { display: flex; gap: 8px; margin-top: 6px; }
+    .sample-thumb { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 2px solid transparent; }
+    .sample-thumb:hover { border-color: var(--accent-color); }
+    
+    canvas { max-width: 100%; max-height: 80vh; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .template-box { margin-top: 10px; max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+    .template-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 10px; border-radius: 6px; font-size: 12px; border: 1px solid var(--border-color); }
+    .template-item.editing { border-color: var(--warning-color); background: rgba(245, 158, 11, 0.1); }
+    .template-info { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow: hidden; margin-right: 8px; }
+    .template-name { font-weight: 600; color: var(--accent-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .template-meta { font-size: 10px; color: var(--text-sub); }
+    .template-actions { display: flex; gap: 4px; shrink: 0; }
+    .template-actions button { padding: 4px 8px; font-size: 11px; }
+
+    .edit-banner { background: rgba(245, 158, 11, 0.15); border: 1px solid var(--warning-color); color: var(--warning-color); padding: 8px 12px; border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .edit-banner button { padding: 2px 6px; font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="sidebar">
+    <div>
+      <h2>Studio Studio</h2>
+      <p style="font-size: 11px; color: var(--text-sub);">Zero-Data Leak Visual Creator</p>
+    </div>
+
+    <!-- 1. 비율 및 배경 선택 -->
+    <div class="field-group">
+      <div class="section-title">1. 비율 및 이미지 설정</div>
+      <label>화면비 선택</label>
+      <select id="aspectRatio" onchange="updateCanvasSize(); render();">
+        <option value="1:1">1:1 (Square - 1080x1080)</option>
+        <option value="4:5" selected>4:5 (Instagram Feed - 1080x1350)</option>
+        <option value="9:16">9:16 (Story/Shorts - 1080x1920)</option>
+      </select>
+
+      <label style="margin-top: 10px;">내장 샘플 이미지 사용</label>
+      <div class="sample-imgs">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" class="sample-thumb" onclick="loadSampleImage(this.src)">
+        <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400" class="sample-thumb" onclick="loadSampleImage(this.src)">
+        <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400" class="sample-thumb" onclick="loadSampleImage(this.src)">
+      </div>
+
+      <label style="margin-top: 10px;">로컬 파일 업로드 (PNG/JPEG)</label>
+      <input type="file" id="imageInput" accept="image/png, image/jpeg" onchange="handleImageUpload(event)">
+    </div>
+
+    <!-- 2. 문구 편집 -->
+    <div class="field-group">
+      <div class="section-title">2. 문구 및 텍스트 스타일</div>
+      <textarea id="textContent" rows="2" oninput="render()">CREATIVE VIBES ONLY</textarea>
+
+      <div class="row" style="margin-top: 8px;">
+        <div style="flex:1;">
+          <label>크기</label>
+          <input type="number" id="fontSize" value="64" min="10" max="200" oninput="render()">
+        </div>
+        <div>
+          <label>색상</label>
+          <input type="color" id="textColor" value="#ffffff" onchange="render()" style="height:35px; width:45px;">
+        </div>
+        <div>
+          <label>외곽선</label>
+          <input type="color" id="strokeColor" value="#000000" onchange="render()" style="height:35px; width:45px;">
+        </div>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <label>텍스트 정렬</label>
+        <select id="textAlign" onchange="render()">
+          <option value="center" selected>중앙 정렬 (Center)</option>
+          <option value="left">왼쪽 정렬 (Left)</option>
+          <option value="right">오른쪽 정렬 (Right)</option>
+        </select>
+      </div>
+
+      <div class="row" style="margin-top: 8px;">
+        <div style="flex:1;">
+          <label>X축 위치 (%)</label>
+          <input type="range" id="posX" min="0" max="100" value="50" oninput="render()" style="width:100%;">
+        </div>
+        <div style="flex:1;">
+          <label>Y축 위치 (%)</label>
+          <input type="range" id="posY" min="0" max="100" value="80" oninput="render()" style="width:100%;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 필터 설정 -->
+    <div class="field-group">
+      <div class="section-title">3. 이미지 필터</div>
+      <div class="row">
+        <div style="flex:1;">
+          <label>밝기</label>
+          <input type="range" id="filterBrightness" min="50" max="150" value="100" oninput="render()" style="width:100%;">
+        </div>
+        <div style="flex:1;">
+          <label>흑백 전환</label>
+          <input type="range" id="filterGray" min="0" max="100" value="0" oninput="render()" style="width:100%;">
+        </div>
+      </div>
+    </div>
+
+    <button onclick="downloadImage()">⬇ 고해상도 파일 내보내기 (PNG)</button>
+
+    <!-- 4. 템플릿 관리 -->
+    <div class="field-group">
+      <div class="section-title">4. 템플릿 관리 & JSON 데이터</div>
+      
+      <!-- 수정 중 모드 표시 상태 배너 -->
+      <div id="editBanner" class="edit-banner" style="display:none;">
+        <span>✏️ <strong id="editingTemplateName">템플릿</strong> 수정 중</span>
+        <button class="secondary" onclick="cancelEditMode()">취소</button>
+      </div>
+
+      <div class="row">
+        <button id="saveBtn" class="secondary" style="flex:1;" onclick="saveOrUpdateTemplate()">새 템플릿 저장</button>
+        <button class="secondary" style="flex:1;" onclick="exportJSON()">JSON 백업</button>
+      </div>
+      <input type="file" id="jsonInput" accept=".json" style="display:none" onchange="importJSON(event)">
+      <button class="secondary" style="width:100%; margin-top:6px;" onclick="document.getElementById('jsonInput').click()">JSON 불러오기</button>
+      
+      <div class="template-box" id="templateList"></div>
+    </div>
+  </div>
+
+  <div class="main-canvas-area">
+    <canvas id="mainCanvas"></canvas>
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('mainCanvas');
+  const ctx = canvas.getContext('2d');
+  let currentImage = null;
+  let editingTemplateId = null; // 현재 수정 중인 템플릿 ID (null이면 신규 생성 모드)
+
+  window.onload = () => {
+    loadSampleImage('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800');
+    loadTemplateList();
+  };
+
+  function updateCanvasSize() {
+    const ratio = document.getElementById('aspectRatio').value;
+    canvas.width = 1080;
+    if (ratio === '1:1') canvas.height = 1080;
+    else if (ratio === '4:5') canvas.height = 1350;
+    else if (ratio === '9:16') canvas.height = 1920;
+    else canvas.height = 1350;
+  }
+
+  function loadSampleImage(url) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      currentImage = img;
+      render();
+    };
+    img.onerror = () => {
+      currentImage = null;
+      render();
+    };
+    img.src = url;
+  }
+
+  function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+      alert('지원하지 않는 파일 형식입니다. (PNG 또는 JPEG만 가능)');
+      e.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        currentImage = img;
+        render();
+      };
+      img.onerror = () => {
+        alert('이미지를 불러오는 도중 오류가 발생했습니다.');
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function render() {
+    updateCanvasSize();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const brightness = document.getElementById('filterBrightness').value || 100;
+    const gray = document.getElementById('filterGray').value || 0;
+    ctx.filter = `brightness(${brightness}%) grayscale(${gray}%)`;
+
+    if (currentImage) {
+      const imgRatio = currentImage.width / currentImage.height;
+      const canvasRatio = canvas.width / canvas.height;
+      let renderW, renderH, offsetX, offsetY;
+
+      if (imgRatio > canvasRatio) {
+        renderH = canvas.height;
+        renderW = canvas.height * imgRatio;
+        offsetX = (canvas.width - renderW) / 2;
+        offsetY = 0;
+      } else {
+        renderW = canvas.width;
+        renderH = canvas.width / imgRatio;
+        offsetX = 0;
+        offsetY = (canvas.height - renderH) / 2;
+      }
+      ctx.drawImage(currentImage, offsetX, offsetY, renderW, renderH);
+    } else {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    ctx.filter = 'none';
+
+    // 안전한 수치 바인딩 (극단적 값 보정)
+    const text = document.getElementById('textContent').value || '';
+    let fontSize = parseInt(document.getElementById('fontSize').value, 10);
+    if (isNaN(fontSize) || fontSize < 5) fontSize = 10;
+    if (fontSize > 300) fontSize = 300;
+
+    const textColor = document.getElementById('textColor').value || '#ffffff';
+    const strokeColor = document.getElementById('strokeColor').value || '#000000';
+    
+    let posXPercent = parseInt(document.getElementById('posX').value, 10);
+    if (isNaN(posXPercent)) posXPercent = 50;
+    
+    let posYPercent = parseInt(document.getElementById('posY').value, 10);
+    if (isNaN(posYPercent)) posYPercent = 50;
+
+    const align = document.getElementById('textAlign').value || 'center';
+
+    ctx.fillStyle = textColor;
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = Math.max(2, fontSize / 12);
+    ctx.font = `900 ${fontSize}px sans-serif`;
+    ctx.textAlign = align;
+
+    const targetX = canvas.width * (posXPercent / 100);
+    const lines = text.split('\n');
+    const lineHeight = fontSize * 1.25;
+    const startY = (canvas.height * (posYPercent / 100)) - ((lines.length - 1) * lineHeight / 2);
+
+    lines.forEach((line, index) => {
+      const yPos = startY + (index * lineHeight);
+      ctx.strokeText(line, targetX, yPos);
+      ctx.fillText(line, targetX, yPos);
+    });
+  }
+
+  function downloadImage() {
+    const link = document.createElement('a');
+    link.download = `exported_image_${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  function getTemplates() {
+    try {
+      return JSON.parse(localStorage.getItem('studio_templates') || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // 템플릿 저장 (신규 저장 또는 기존 템플릿 덮어쓰기 수정)
+  function saveOrUpdateTemplate() {
+    const templates = getTemplates();
+    
+    const templateData = {
+      aspectRatio: document.getElementById('aspectRatio').value,
+      text: document.getElementById('textContent').value,
+      fontSize: document.getElementById('fontSize').value,
+      textColor: document.getElementById('textColor').value,
+      strokeColor: document.getElementById('strokeColor').value,
+      posX: document.getElementById('posX').value,
+      posY: document.getElementById('posY').value,
+      textAlign: document.getElementById('textAlign').value,
+      filterBrightness: document.getElementById('filterBrightness').value,
+      filterGray: document.getElementById('filterGray').value
+    };
+
+    if (editingTemplateId !== null) {
+      // [수정 모드]: 기존 템플릿 찾아 데이터 업데이트 (덮어쓰기)
+      const targetIndex = templates.findIndex(t => t.id === editingTemplateId);
+      if (targetIndex !== -1) {
+        templates[targetIndex] = {
+          ...templates[targetIndex],
+          ...templateData,
+          updatedAt: new Date().toLocaleString()
+        };
+        localStorage.setItem('studio_templates', JSON.stringify(templates));
+        alert(`'${templates[targetIndex].name}' 템플릿이 성공적으로 수정되었습니다.`);
+      }
+      cancelEditMode();
+    } else {
+      // [신규 저장 모드]: 새로운 ID 생성 후 추가
+      const namePrompt = prompt('저장할 템플릿 이름을 입력하세요:', `템플릿 ${templates.length + 1}`);
+      if (namePrompt === null) return; // 취소 누른 경우
+
+      const newTemplate = {
+        id: Date.now(),
+        name: namePrompt.trim() || `템플릿 ${templates.length + 1}`,
+        ...templateData,
+        createdAt: new Date().toLocaleString()
+      };
+      templates.push(newTemplate);
+      localStorage.setItem('studio_templates', JSON.stringify(templates));
+      alert(`'${newTemplate.name}' 템플릿이 저장되었습니다.`);
+    }
+
+    loadTemplateList();
+  }
+
+  // 템플릿 목록 렌더링
+  function loadTemplateList() {
+    const listEl = document.getElementById('templateList');
+    listEl.innerHTML = '';
+    const templates = getTemplates();
+
+    if (templates.length === 0) {
+      listEl.innerHTML = '<div style="font-size:11px; color:var(--text-sub); text-align:center; padding:10px;">저장된 템플릿이 없습니다.</div>';
+      return;
+    }
+
+    templates.forEach(t => {
+      const item = document.createElement('div');
+      const isEditing = t.id === editingTemplateId;
+      item.className = `template-item ${isEditing ? 'editing' : ''}`;
+      
+      item.innerHTML = `
+        <div class="template-info" onclick="applyTemplate(${t.id})" style="cursor:pointer;" title="클릭하여 불러오기">
+          <span class="template-name">${t.name}</span>
+          <span class="template-meta">${t.aspectRatio} | 글자: ${t.fontSize}px</span>
+        </div>
+        <div class="template-actions">
+          <button class="warning" onclick="startEditTemplate(${t.id})">수정</button>
+          <button class="danger" onclick="deleteTemplate(${t.id})">삭제</button>
+        </div>
+      `;
+      listEl.appendChild(item);
+    });
+  }
+
+  // 템플릿 불러오기 (적용)
+  function applyTemplate(id) {
+    const t = getTemplates().find(item => item.id === id);
+    if (!t) return;
+    document.getElementById('aspectRatio').value = t.aspectRatio || '4:5';
+    document.getElementById('textContent').value = t.text || '';
+    document.getElementById('fontSize').value = t.fontSize || 64;
+    document.getElementById('textColor').value = t.textColor || '#ffffff';
+    document.getElementById('strokeColor').value = t.strokeColor || '#000000';
+    document.getElementById('posX').value = t.posX !== undefined ? t.posX : 50;
+    document.getElementById('posY').value = t.posY !== undefined ? t.posY : 80;
+    document.getElementById('textAlign').value = t.textAlign || 'center';
+    document.getElementById('filterBrightness').value = t.filterBrightness !== undefined ? t.filterBrightness : 100;
+    document.getElementById('filterGray').value = t.filterGray !== undefined ? t.filterGray : 0;
+    render();
+  }
+
+  // 템플릿 수정 모드 진입
+  function startEditTemplate(id) {
+    const t = getTemplates().find(item => item.id === id);
+    if (!t) return;
+
+    editingTemplateId = id;
+    applyTemplate(id);
+
+    // UI 상태 업데이트
+    document.getElementById('editBanner').style.display = 'flex';
+    document.getElementById('editingTemplateName').innerText = t.name;
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.innerText = '💾 템플릿 수정 완료 (덮어쓰기)';
+    saveBtn.className = 'warning';
+
+    loadTemplateList();
+  }
+
+  // 수정 모드 취소
+  function cancelEditMode() {
+    editingTemplateId = null;
+    document.getElementById('editBanner').style.display = 'none';
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.innerText = '새 템플릿 저장';
+    saveBtn.className = 'secondary';
+    loadTemplateList();
+  }
+
+  // 템플릿 삭제 (제거 기능)
+  function deleteTemplate(id) {
+    const t = getTemplates().find(item => item.id === id);
+    if (!t) return;
+
+    if (confirm(`'${t.name}' 템플릿을 정말 삭제하시겠습니까?`)) {
+      const templates = getTemplates().filter(item => item.id !== id);
+      localStorage.setItem('studio_templates', JSON.stringify(templates));
+      
+      // 만약 수정 중이던 템플릿을 삭제했다면 수정 모드 해제
+      if (editingTemplateId === id) {
+        cancelEditMode();
+      } else {
+        loadTemplateList();
+      }
+    }
+  }
+
+  function exportJSON() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(getTemplates(), null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", "studio_templates.json");
+    dlAnchor.click();
+  }
+
+  // 잘못된 JSON 2종 (Syntax error, Schema error) 분리 예외 처리
+  function importJSON(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      let parsed;
+      
+      // 1. Syntax Error 검사
+      try {
+        parsed = JSON.parse(event.target.result);
+      } catch (syntaxErr) {
+        alert('잘못된 파일입니다 (오류 1: 문법이 깨진 JSON 파일).\n기존 템플릿이 안전하게 유지됩니다.');
+        e.target.value = '';
+        return;
+      }
+
+      // 2. Schema Error 검사
+      try {
+        if (!Array.isArray(parsed)) throw new Error("JSON 최상위 항목이 배열 형식이 아닙니다.");
+        parsed.forEach((item, index) => {
+          if (!item.aspectRatio || item.text === undefined || !item.fontSize) {
+            throw new Error(`${index + 1}번째 항목에 필수 속성(aspectRatio, text, fontSize)이 없습니다.`);
+          }
+        });
+
+        // 검증 통과 시에만 적용
+        localStorage.setItem('studio_templates', JSON.stringify(parsed));
+        cancelEditMode();
+        loadTemplateList();
+        alert('템플릿이 성공적으로 복원되었습니다.');
+      } catch (schemaErr) {
+        alert('잘못된 파일입니다 (오류 2: 규격이 맞지 않는 JSON 파일).\n사유: ' + schemaErr.message + '\n기존 템플릿이 안전하게 유지됩니다.');
+      } finally {
+        e.target.value = '';
+      }
+    };
+    reader.readAsText(file);
+  }
+</script>
+
+</body>
+</html>
