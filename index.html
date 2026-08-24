@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>프리미엄 템플릿 & 이미지 스튜디오 QA (고급 에디터)</title>
+  <title>프리미엄 템플릿 & 이미지 스튜디오 QA</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -228,12 +228,6 @@
       outline-offset: 2px;
     }
 
-    /* 도형 클립패스 */
-    .shape-rect { border-radius: 0; }
-    .shape-circle { border-radius: 50%; }
-    .shape-triangle { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
-    .shape-star { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
-
     .object-text {
       white-space: nowrap;
       cursor: text;
@@ -304,25 +298,14 @@
       </select>
     </div>
 
-    <!-- 모형 모드 (도형 추가) -->
+    <!-- 텍스트 추가 -->
     <div class="tool-group">
-      <div class="dropdown" id="shapeDropdown">
-        <button class="btn" onclick="toggleDropdown('shapeDropdown')">
-          <i class="fa-solid fa-shapes"></i> 모형 모드 <i class="fa-solid fa-chevron-down"></i>
-        </button>
-        <div class="dropdown-content">
-          <a class="dropdown-item" onclick="addObject('shape', 'rect')"><i class="fa-solid fa-square"></i> 직사각형</a>
-          <a class="dropdown-item" onclick="addObject('shape', 'circle')"><i class="fa-solid fa-circle"></i> 원형</a>
-          <a class="dropdown-item" onclick="addObject('shape', 'triangle')"><i class="fa-solid fa-play" style="transform: rotate(-90deg);"></i> 삼각형</a>
-          <a class="dropdown-item" onclick="addObject('shape', 'star')"><i class="fa-solid fa-star"></i> 별 모양</a>
-        </div>
-      </div>
-      <button class="btn" onclick="addObject('text')"><i class="fa-solid fa-font"></i> 글씨 추가</button>
+      <button class="btn" onclick="addText()"><i class="fa-solid fa-font"></i> 글씨 추가</button>
     </div>
 
-    <!-- 요소 커스텀 (색상, 폰트 등) -->
+    <!-- 텍스트 속성 커스텀 (색상, 폰트 등) -->
     <div class="tool-group">
-      <span style="font-size:11px; color:var(--text-muted);">색상:</span>
+      <span style="font-size:11px; color:var(--text-muted);">텍스트 색상:</span>
       <input type="color" id="fillColorPicker" class="color-picker" value="#8b5cf6">
       
       <span style="font-size:11px; color:var(--text-muted);">폰트:</span>
@@ -497,19 +480,16 @@
     reader.readAsDataURL(file);
   };
 
-  // 모형 및 객체 추가
-  function addObject(type, shape = 'rect') {
+  // 텍스트 추가
+  function addText() {
     const newObj = {
       id: 'obj_' + Date.now(),
-      type: type,
-      shape: shape,
+      type: 'text',
       x: 50, y: 50,
-      w: type === 'text' ? null : 100,
-      h: type === 'text' ? null : 100,
       color: fillColorPicker.value,
       font: fontSelect.value,
       fontSize: parseInt(fontSizeInput.value),
-      text: type === 'text' ? '샘플 텍스트' : null
+      text: '샘플 텍스트'
     };
     commitState({
       ...history.present,
@@ -540,7 +520,7 @@
     commitState({ ...history.present, objects: nextObjs });
   }
 
-  // 키보드 조작 이벤트 (방향키, Delete, Ctrl+Z/Y)
+  // 키보드 조작 이벤트 (방향키, Delete)
   window.addEventListener('keydown', (e) => {
     if (e.target.isContentEditable || e.target.tagName === 'INPUT') return;
 
@@ -581,26 +561,20 @@
     state.objects.forEach(obj => {
       const el = document.createElement('div');
       el.id = obj.id;
-      el.className = `canvas-object shape-${obj.shape}` + (obj.id === state.selectedId ? ' selected' : '');
+      el.className = 'canvas-object object-text' + (obj.id === state.selectedId ? ' selected' : '');
       el.style.left = obj.x + 'px';
       el.style.top = obj.y + 'px';
 
-      if (obj.type === 'text') {
-        el.textContent = obj.text;
-        el.contentEditable = true;
-        el.style.color = obj.color;
-        el.style.fontFamily = obj.font;
-        el.style.fontSize = obj.fontSize + 'px';
-        el.className += ' object-text';
-        el.onblur = (e) => {
-          obj.text = e.target.textContent;
-          syncPreview();
-        };
-      } else {
-        el.style.width = obj.w + 'px';
-        el.style.height = obj.h + 'px';
-        el.style.backgroundColor = obj.color;
-      }
+      el.textContent = obj.text;
+      el.contentEditable = true;
+      el.style.color = obj.color;
+      el.style.fontFamily = obj.font;
+      el.style.fontSize = obj.fontSize + 'px';
+      
+      el.onblur = (e) => {
+        obj.text = e.target.textContent;
+        syncPreview();
+      };
 
       // 속성 툴바 값 세팅
       if (obj.id === state.selectedId) {
