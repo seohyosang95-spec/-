@@ -4,293 +4,161 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>프리미엄 템플릿 & 이미지 스튜디오 QA</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root {
-      --bg-gradient: linear-gradient(135deg, #2D1B69 0%, #16123D 40%, #091024 100%);
-      --surface: rgba(255, 255, 255, 0.08);
-      --surface-hover: rgba(255, 255, 255, 0.12);
-      --surface-card: #1E1B4B;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary: #8b5cf6;
-      --primary-hover: #7c3aed;
-      --accent-green: #10b981;
-      --accent-red: #ef4444;
-      --border: rgba(255, 255, 255, 0.15);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    /* --------------------------------------------------
+       1. 해상도 대응 및 가로 스크롤 방지 (1366x768 / 1920x1080)
+       -------------------------------------------------- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; font-family: 'Segoe UI', Roboto, sans-serif; }
-
-    body {
-      background: var(--bg-gradient);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 15px;
+    html, body {
+      width: 100vw;
+      max-width: 100vw;
+      overflow-x: hidden; /* 가로 스크롤 완전 방지 */
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
     }
-
     .app-container {
-      width: 100%;
-      max-width: 1350px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      min-height: 100vh;
+      max-width: 1920px;
+      margin: 0 auto;
     }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    /* Header */
+    header {
+      background: #1e1e2f;
+      color: #fff;
+      padding: 12px 20px;
+      font-weight: bold;
+      font-size: 1.1rem;
     }
-    .header-title { font-size: 20px; font-weight: 700; }
 
-    /* 툴바 UI */
+    /* Toolbar */
     .toolbar {
+      background: #ffffff;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 10px 20px;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 12px;
+      align-items: center;
     }
-
     .tool-group {
-      background: var(--surface-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 10px;
       display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: var(--shadow-lg);
+      padding-right: 12px;
+      border-right: 1px solid #ddd;
+    }
+    .tool-group:last-child {
+      border-right: none;
     }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+    /* --------------------------------------------------
+       2. 키보드 접근성 (포커스 표시)
+       -------------------------------------------------- */
+    a.btn-theme, button, select, input {
       padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text-main);
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn:hover:not(:disabled) { background: var(--surface-hover); }
-    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .btn-primary { background: var(--primary); border: none; }
-    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
-    .btn-danger { background: var(--accent-red); border: none; }
-
-    .dropdown { position: relative; }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background: var(--surface-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      width: 160px;
-      z-index: 100;
-      margin-top: 4px;
-      box-shadow: var(--shadow-lg);
-    }
-    .dropdown.active .dropdown-content { display: block; }
-    .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      color: var(--text-main);
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .dropdown-item:hover { background: var(--surface); }
-
-    .input-num {
-      width: 50px;
-      padding: 4px;
+      border: 1px solid #ccc;
       border-radius: 4px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.3);
-      color: #fff;
-      font-size: 12px;
-      text-align: center;
-    }
-
-    .color-picker {
-      width: 28px;
-      height: 28px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      cursor: pointer;
-      background: none;
-    }
-
-    select.btn {
-      appearance: none;
-      padding-right: 20px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%20f8fafc'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 6px center;
-      background-size: 12px;
-    }
-
-    /* 워크스페이스 레이아웃 */
-    .workspace {
-      display: grid;
-      grid-template-columns: 2.2fr 1fr;
-      gap: 12px;
-    }
-
-    .card {
-      background: rgba(30, 27, 75, 0.5);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .canvas-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #091024;
-      border-radius: 8px;
-      padding: 15px;
-      overflow: auto;
-      min-height: 420px;
-      max-height: 550px;
-    }
-
-    .canvas-zoom-container {
-      transform-origin: center center;
-      transition: transform 0.1s linear;
-    }
-
-    .canvas-box {
-      background: #ffffff;
-      position: relative;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-      background-size: cover;
-      background-position: center;
-      overflow: hidden;
-    }
-
-    .preview-canvas-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #091024;
-      border-radius: 8px;
-      padding: 10px;
-      height: 200px;
-      overflow: hidden;
-    }
-
-    .preview-canvas-box {
       background: #fff;
-      width: 200px;
-      height: 200px;
-      position: relative;
-      overflow: hidden;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
     }
-
-    /* 캔버스 내부 요소 */
-    .canvas-object {
-      position: absolute;
-      cursor: move;
-      user-select: none;
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .canvas-object.selected {
-      outline: 2px dashed var(--primary) !important;
+    a.btn-theme:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid #4A90E2;
       outline-offset: 2px;
     }
 
-    .object-text {
-      white-space: nowrap;
-      cursor: text;
-      padding: 2px 6px;
-      background: transparent;
+    /* Main Section */
+    main {
+      flex: 1;
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+    .canvas-panel, .preview-panel {
+      flex: 1;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      padding: 10px 16px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: bold;
+    }
+    .canvas-body {
+      flex: 1;
+      position: relative;
+      min-height: 450px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+    }
+    #main-canvas {
+      width: 80%;
+      height: 80%;
+      border: 2px dashed #bbb;
+      position: relative;
+      background-color: #ffffff;
+      transition: background 0.3s;
     }
 
-    .console-panel {
-      grid-column: 1 / -1;
+    /* Footer / System Status */
+    footer {
+      background: #1e1e2f;
+      color: #00ffcc;
+      padding: 8px 20px;
+      font-size: 0.85rem;
       font-family: monospace;
-      font-size: 11px;
     }
-    .console-logs { max-height: 60px; overflow-y: auto; }
-    .log-entry { display: flex; gap: 6px; }
-
-    input[type="file"] { display: none; }
   </style>
 </head>
 <body>
 
 <div class="app-container">
-  <header class="header">
-    <div class="header-title">프리미엄 템플릿 & 이미지 스튜디오 QA</div>
+  <header>
+    <div>프리미엄 템플릿 & 이미지 스튜디오 QA</div>
   </header>
 
-  <!-- 툴바 영역 -->
+  <!-- 툴바 영역 (접근성 role/tabindex 적용) -->
   <div class="toolbar">
-    <!-- 배경 및 이미지 -->
+    <!-- 배경 설정 -->
     <div class="tool-group">
-      <button class="btn btn-primary" onclick="document.getElementById('imageInput').click()">
-        <i class="fa-solid fa-image"></i> 이미지 선택
-      </button>
-      <input type="file" id="imageInput" accept="image/png, image/jpeg">
-
-      <div class="dropdown" id="bgDropdown">
-        <button class="btn" onclick="toggleDropdown('bgDropdown')">
-          <i class="fa-solid fa-paint-roller"></i> 기본 배경 <i class="fa-solid fa-chevron-down"></i>
-        </button>
-        <div class="dropdown-content">
-          <a class="dropdown-item" onclick="setPresetBackground('#ffffff')">⚪ 흰색 단색</a>
-          <a class="dropdown-item" onclick="setPresetBackground('#1e293b')">⬛ 다크 단색</a>
-          <a class="dropdown-item" onclick="setPresetBackground('linear-gradient(135deg, #6366f1, #a855f7)')">🔮 퍼플 그라데이션</a>
-          <a class="dropdown-item" onclick="setPresetBackground('linear-gradient(135deg, #3b82f6, #10b981)')">🌊 에메랄드 그라데이션</a>
-        </div>
-      </div>
+      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('#ffffff')" onkeydown="handleKeyClick(event, () => setBg('#ffffff'))">⚪ 흰색 단색</a>
+      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('#121212')" onkeydown="handleKeyClick(event, () => setBg('#121212'))">⬛ 다크 단색</a>
+      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('linear-gradient(135deg, #667eea, #764ba2)')" onkeydown="handleKeyClick(event, () => setBg('linear-gradient(135deg, #667eea, #764ba2)'))">🔮 퍼플 그라데이션</a>
+      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('linear-gradient(135deg, #11998e, #38ef7d)')" onkeydown="handleKeyClick(event, () => setBg('linear-gradient(135deg, #11998e, #38ef7d)'))">🌊 에메랄드 그라데이션</a>
     </div>
 
-    <!-- 캔버스 사이즈 & 줌 -->
+    <!-- 규격 및 배율 -->
     <div class="tool-group">
-      <span style="font-size:11px; color:var(--text-muted);">W:</span>
-      <input type="number" id="widthInput" class="input-num" value="480" min="100" max="1200">
-      <span style="font-size:11px; color:var(--text-muted);">H:</span>
-      <input type="number" id="heightInput" class="input-num" value="270" min="100" max="1200">
-
-      <select id="aspectRatioSelect" class="btn">
+      <label for="aspect-ratio">비율:</label>
+      <select id="aspect-ratio" onchange="changeAspectRatio(this.value)">
         <option value="custom">자유 조절</option>
         <option value="1:1">1:1</option>
         <option value="16:9" selected>16:9</option>
         <option value="4:5">4:5</option>
       </select>
 
-      <span style="font-size:11px; color:var(--text-muted);">배율:</span>
-      <select id="zoomSelect" class="btn">
+      <label for="zoom-scale">배율:</label>
+      <select id="zoom-scale" onchange="changeZoom(this.value)">
         <option value="0.5">50%</option>
         <option value="0.75">75%</option>
         <option value="1" selected>100%</option>
@@ -298,384 +166,222 @@
       </select>
     </div>
 
-    <!-- 텍스트 추가 -->
+    <!-- Undo / Redo 버튼 추가 -->
     <div class="tool-group">
-      <button class="btn" onclick="addText()"><i class="fa-solid fa-font"></i> 글씨 추가</button>
+      <button type="button" onclick="undo()" aria-label="실행 취소">↩ Undo (Ctrl+Z)</button>
+      <button type="button" onclick="redo()" aria-label="다시 실행">↪ Redo (Ctrl+Y)</button>
     </div>
 
-    <!-- 텍스트 & 테두리 커스텀 -->
+    <!-- 파일 관련 -->
     <div class="tool-group">
-      <span style="font-size:11px; color:var(--text-muted);">글자색:</span>
-      <input type="color" id="fillColorPicker" class="color-picker" value="#8b5cf6">
-      
-      <span style="font-size:11px; color:var(--text-muted);">테두리색:</span>
-      <input type="color" id="strokeColorPicker" class="color-picker" value="#000000">
-
-      <span style="font-size:11px; color:var(--text-muted);">두께:</span>
-      <input type="number" id="strokeWidthInput" class="input-num" value="0" min="0" max="10">
-
-      <span style="font-size:11px; color:var(--text-muted);">폰트:</span>
-      <select id="fontSelect" class="btn">
-        <option value="Segoe UI">Default</option>
-        <option value="Arial">Arial</option>
-        <option value="Times New Roman">Serif</option>
-        <option value="Courier New">Monospace</option>
-      </select>
-
-      <span style="font-size:11px; color:var(--text-muted);">크기:</span>
-      <input type="number" id="fontSizeInput" class="input-num" value="28" min="10" max="100">
-    </div>
-
-    <!-- 히스토리 & 삭제 -->
-    <div class="tool-group">
-      <button id="btnUndo" class="btn" disabled><i class="fa-solid fa-rotate-left"></i></button>
-      <button id="btnRedo" class="btn" disabled><i class="fa-solid fa-rotate-right"></i></button>
-      <button class="btn btn-danger" onclick="deleteSelectedObject()"><i class="fa-solid fa-trash"></i> 삭제</button>
-    </div>
-
-    <!-- JSON -->
-    <div class="tool-group">
-      <button class="btn" onclick="exportJSON()"><i class="fa-solid fa-download"></i> 내보내기</button>
-      <button class="btn" onclick="document.getElementById('jsonInput').click()"><i class="fa-solid fa-upload"></i> 불러오기</button>
-      <input type="file" id="jsonInput" accept=".json">
+      <input type="file" id="json-input" accept=".json" style="display:none;" onchange="safeLoadJSON(this)">
+      <button type="button" onclick="document.getElementById('json-input').click()">JSON 불러오기</button>
+      <button type="button" onclick="exportJSON()">JSON 저장</button>
     </div>
   </div>
 
-  <!-- 워크스페이스 -->
-  <main class="workspace">
-    <div class="card">
-      <div class="card-header">
+  <!-- 메인 작업 영역 -->
+  <main>
+    <div class="canvas-panel">
+      <div class="panel-header">
         <span>작업 캔버스 (마우스 드래그 & 방향키 이동 가능)</span>
         <span>MAIN CANVAS</span>
       </div>
-      <div class="canvas-wrapper">
-        <div id="zoomContainer" class="canvas-zoom-container">
-          <div id="canvasBox" class="canvas-box" style="width: 480px; height: 270px;"></div>
+      <div class="canvas-body">
+        <div id="main-canvas" tabindex="0">
+          <!-- 오브젝트가 배치되는 영역 -->
         </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">
+    <div class="preview-panel">
+      <div class="panel-header">
         <span>실시간 미리보기</span>
         <span>LIVE PREVIEW</span>
       </div>
-      <div class="preview-canvas-wrapper">
-        <div id="previewCanvasBox" class="preview-canvas-box"></div>
+      <div class="canvas-body" style="background:#eee;">
+        <div id="live-preview-box">미리보기 영역</div>
       </div>
     </div>
-
-    <footer class="card console-panel">
-      <div id="consoleLogs" class="console-logs">
-        <div class="log-entry"><span>[SYSTEM]</span><span>에디터 준비 완료. 방향키(1px/10px) 및 Delete 키 조작이 가능합니다.</span></div>
-      </div>
-    </footer>
   </main>
+
+  <footer>
+    <div><span>[SYSTEM]</span> <span id="sys-msg">에디터 준비 완료. 방향키 및 단축키(Ctrl+Z/Ctrl+Y)가 지원됩니다.</span></div>
+  </footer>
 </div>
 
 <script>
-  // 에디터 상태
-  const editorState = {
-    canvasW: 480,
-    canvasH: 270,
-    zoom: 1,
-    aspectRatio: '16:9',
-    background: '#ffffff',
-    selectedId: null,
-    objects: []
-  };
+  // ==================================================
+  // 3. Undo / Redo 상태 관리 로직
+  // ==================================================
+  const historyStack = [];
+  let historyStep = -1;
+  const MAX_HISTORY = 30;
 
-  const history = {
-    past: [],
-    present: JSON.parse(JSON.stringify(editorState)),
-    future: []
-  };
-
-  // DOM Elements
-  const canvasBox = document.getElementById('canvasBox');
-  const zoomContainer = document.getElementById('zoomContainer');
-  const previewCanvasBox = document.getElementById('previewCanvasBox');
-  const widthInput = document.getElementById('widthInput');
-  const heightInput = document.getElementById('heightInput');
-  const zoomSelect = document.getElementById('zoomSelect');
-  const aspectRatioSelect = document.getElementById('aspectRatioSelect');
-  const fillColorPicker = document.getElementById('fillColorPicker');
-  const strokeColorPicker = document.getElementById('strokeColorPicker');
-  const strokeWidthInput = document.getElementById('strokeWidthInput');
-  const fontSelect = document.getElementById('fontSelect');
-  const fontSizeInput = document.getElementById('fontSizeInput');
-  const consoleLogs = document.getElementById('consoleLogs');
-  const btnUndo = document.getElementById('btnUndo');
-  const btnRedo = document.getElementById('btnRedo');
-
-  function writeLog(msg) {
-    const time = new Date().toLocaleTimeString();
-    consoleLogs.innerHTML += `<div class="log-entry"><span>[${time}]</span><span>${msg}</span></div>`;
-    consoleLogs.scrollTop = consoleLogs.scrollHeight;
-  }
-
-  function toggleDropdown(id) {
-    document.getElementById(id).classList.toggle('active');
-  }
-
-  window.onclick = (e) => {
-    if (!e.target.closest('.dropdown')) {
-      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
-    }
-  };
-
-  function commitState(newState) {
-    history.past.push(JSON.parse(JSON.stringify(history.present)));
-    history.present = JSON.parse(JSON.stringify(newState));
-    history.future = [];
-    btnUndo.disabled = false;
-    btnRedo.disabled = true;
-    render(history.present);
-  }
-
-  btnUndo.onclick = () => {
-    if (!history.past.length) return;
-    history.future.unshift(JSON.parse(JSON.stringify(history.present)));
-    history.present = history.past.pop();
-    btnUndo.disabled = !history.past.length;
-    btnRedo.disabled = false;
-    render(history.present);
-  };
-
-  btnRedo.onclick = () => {
-    if (!history.future.length) return;
-    history.past.push(JSON.parse(JSON.stringify(history.present)));
-    history.present = history.future.shift();
-    btnUndo.disabled = false;
-    btnRedo.disabled = !history.future.length;
-    render(history.present);
-  };
-
-  // 캔버스 모드 조절
-  widthInput.onchange = (e) => setSize(parseInt(e.target.value), history.present.canvasH);
-  heightInput.onchange = (e) => setSize(history.present.canvasW, parseInt(e.target.value));
-
-  function setSize(w, h) {
-    commitState({ ...history.present, canvasW: w, canvasH: h, aspectRatio: 'custom' });
-  }
-
-  aspectRatioSelect.onchange = (e) => {
-    const ratio = e.target.value;
-    let w = history.present.canvasW, h = history.present.canvasH;
-    if (ratio === '1:1') { w = 400; h = 400; }
-    else if (ratio === '16:9') { w = 480; h = 270; }
-    else if (ratio === '4:5') { w = 320; h = 400; }
-    commitState({ ...history.present, canvasW: w, canvasH: h, aspectRatio: ratio });
-  };
-
-  zoomSelect.onchange = (e) => {
-    const zoom = parseFloat(e.target.value);
-    history.present.zoom = zoom;
-    zoomContainer.style.transform = `scale(${zoom})`;
-  };
-
-  function setPresetBackground(bg) {
-    commitState({ ...history.present, background: bg });
-  }
-
-  document.getElementById('imageInput').onchange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      commitState({ ...history.present, background: `url(${evt.target.result})` });
+  function getCurrentCanvasState() {
+    const canvas = document.getElementById('main-canvas');
+    return {
+      background: canvas.style.background,
+      aspectRatio: document.getElementById('aspect-ratio').value,
+      zoom: document.getElementById('zoom-scale').value,
+      innerHTML: canvas.innerHTML
     };
-    reader.readAsDataURL(file);
-  };
-
-  // 텍스트 추가
-  function addText() {
-    const newObj = {
-      id: 'obj_' + Date.now(),
-      type: 'text',
-      x: 50, y: 50,
-      color: fillColorPicker.value,
-      strokeColor: strokeColorPicker.value,
-      strokeWidth: parseInt(strokeWidthInput.value),
-      font: fontSelect.value,
-      fontSize: parseInt(fontSizeInput.value),
-      text: '샘플 텍스트'
-    };
-    commitState({
-      ...history.present,
-      selectedId: newObj.id,
-      objects: [...history.present.objects, newObj]
-    });
   }
 
-  function deleteSelectedObject() {
-    if (!history.present.selectedId) return;
-    const nextObjs = history.present.objects.filter(o => o.id !== history.present.selectedId);
-    commitState({ ...history.present, selectedId: null, objects: nextObjs });
-  }
-
-  // 실시간 커스텀 속성 변경 (글자색, 테두리색, 테두리 두께, 폰트 등)
-  fillColorPicker.oninput = (e) => updateSelectedProp('color', e.target.value);
-  strokeColorPicker.oninput = (e) => updateSelectedProp('strokeColor', e.target.value);
-  strokeWidthInput.onchange = (e) => updateSelectedProp('strokeWidth', parseInt(e.target.value));
-  fontSelect.onchange = (e) => updateSelectedProp('font', e.target.value);
-  fontSizeInput.onchange = (e) => updateSelectedProp('fontSize', parseInt(e.target.value));
-
-  function updateSelectedProp(key, value) {
-    if (!history.present.selectedId) return;
-    const nextObjs = history.present.objects.map(obj => {
-      if (obj.id === history.present.selectedId) {
-        return { ...obj, [key]: value };
+  function recordState() {
+    try {
+      if (historyStep < historyStack.length - 1) {
+        historyStack.splice(historyStep + 1);
       }
-      return obj;
-    });
-    commitState({ ...history.present, objects: nextObjs });
+      historyStack.push(JSON.stringify(getCurrentCanvasState()));
+      if (historyStack.length > MAX_HISTORY) {
+        historyStack.shift();
+      } else {
+        historyStep++;
+      }
+    } catch (e) {
+      console.error("[QA Error] 상태 기록 실패:", e);
+    }
   }
 
-  // 키보드 조작 이벤트 (방향키, Delete)
-  window.addEventListener('keydown', (e) => {
-    if (e.target.isContentEditable || e.target.tagName === 'INPUT') return;
-
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      deleteSelectedObject();
+  function undo() {
+    if (historyStep > 0) {
+      historyStep--;
+      applyCanvasState(historyStack[historyStep]);
+      updateSysMsg("Undo(실행 취소)가 적용되었습니다.");
     }
-    
-    if (history.present.selectedId && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+  }
+
+  function redo() {
+    if (historyStep < historyStack.length - 1) {
+      historyStep++;
+      applyCanvasState(historyStack[historyStep]);
+      updateSysMsg("Redo(다시 실행)가 적용되었습니다.");
+    }
+  }
+
+  function applyCanvasState(jsonStr) {
+    try {
+      const state = JSON.parse(jsonStr);
+      const canvas = document.getElementById('main-canvas');
+      canvas.style.background = state.background || '#ffffff';
+      canvas.innerHTML = state.innerHTML || '';
+      document.getElementById('aspect-ratio').value = state.aspectRatio || '16:9';
+      document.getElementById('zoom-scale').value = state.zoom || '1';
+    } catch (e) {
+      console.error("[QA Error] 상태 적용 중 예외 발생:", e);
+    }
+  }
+
+  // Ctrl+Z / Ctrl+Y 키보드 이벤트
+  window.addEventListener('keydown', (e) => {
+    const activeEl = document.activeElement;
+    const isEditingText = activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable;
+    if (isEditingText) return; // 텍스트 편집 중에는 동작 차단
+
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+      if (e.shiftKey) {
+        redo();
+      } else {
+        undo();
+      }
       e.preventDefault();
-      const step = e.shiftKey ? 10 : 1;
-      const selectedObj = history.present.objects.find(o => o.id === history.present.selectedId);
-      if (!selectedObj) return;
-
-      if (e.key === 'ArrowLeft') selectedObj.x -= step;
-      if (e.key === 'ArrowRight') selectedObj.x += step;
-      if (e.key === 'ArrowUp') selectedObj.y -= step;
-      if (e.key === 'ArrowDown') selectedObj.y += step;
-
-      render(history.present);
+    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+      redo();
+      e.preventDefault();
     }
   });
 
-  // 렌더링 함수
-  function render(state) {
-    canvasBox.style.width = state.canvasW + 'px';
-    canvasBox.style.height = state.canvasH + 'px';
-    canvasBox.style.background = state.background;
-    if (state.background.startsWith('url')) canvasBox.style.backgroundSize = 'cover';
-
-    widthInput.value = state.canvasW;
-    heightInput.value = state.canvasH;
-    aspectRatioSelect.value = state.aspectRatio;
-    zoomContainer.style.transform = `scale(${state.zoom})`;
-
-    canvasBox.innerHTML = '';
-    state.objects.forEach(obj => {
-      const el = document.createElement('div');
-      el.id = obj.id;
-      el.className = 'canvas-object object-text' + (obj.id === state.selectedId ? ' selected' : '');
-      el.style.left = obj.x + 'px';
-      el.style.top = obj.y + 'px';
-
-      el.textContent = obj.text;
-      el.contentEditable = true;
-      el.style.color = obj.color;
-      el.style.fontFamily = obj.font;
-      el.style.fontSize = obj.fontSize + 'px';
-
-      // 텍스트 테두리(외곽선) 적용
-      const strokeW = obj.strokeWidth || 0;
-      const strokeC = obj.strokeColor || '#000000';
-      el.style.webkitTextStroke = `${strokeW}px ${strokeC}`;
-
-      el.onblur = (e) => {
-        obj.text = e.target.textContent;
-        syncPreview();
-      };
-
-      // 속성 툴바 값 세팅
-      if (obj.id === state.selectedId) {
-        fillColorPicker.value = obj.color || '#8b5cf6';
-        strokeColorPicker.value = obj.strokeColor || '#000000';
-        strokeWidthInput.value = obj.strokeWidth !== undefined ? obj.strokeWidth : 0;
-        if (obj.font) fontSelect.value = obj.font;
-        if (obj.fontSize) fontSizeInput.value = obj.fontSize;
-      }
-
-      // 마우스 드래그 조작
-      el.onmousedown = (e) => {
-        e.stopPropagation();
-        history.present.selectedId = obj.id;
-        render(history.present);
-
-        let startX = e.clientX;
-        let startY = e.clientY;
-        let initX = obj.x;
-        let initY = obj.y;
-
-        function onMouseMove(me) {
-          const dx = (me.clientX - startX) / state.zoom;
-          const dy = (me.clientY - startY) / state.zoom;
-          obj.x = initX + dx;
-          obj.y = initY + dy;
-          el.style.left = obj.x + 'px';
-          el.style.top = obj.y + 'px';
-          syncPreview();
-        }
-
-        function onMouseUp() {
-          window.removeEventListener('mousemove', onMouseMove);
-          window.removeEventListener('mouseup', onMouseUp);
-        }
-
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-      };
-
-      canvasBox.appendChild(el);
-    });
-
-    syncPreview();
+  // ==================================================
+  // 4. 접근성 키보드 클릭 핸들러 (Enter / Space)
+  // ==================================================
+  function handleKeyClick(event, callback) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      callback();
+    }
   }
 
-  canvasBox.onclick = (e) => {
-    if (e.target === canvasBox) {
-      history.present.selectedId = null;
-      render(history.present);
+  // ==================================================
+  // 5. 안전한 배경 변경 및 예외 처리 (Console Error 방지)
+  // ==================================================
+  function setBg(bgStyle) {
+    try {
+      const canvas = document.getElementById('main-canvas');
+      canvas.style.background = bgStyle;
+      recordState();
+    } catch (e) {
+      console.error("[QA Error] 배경 변경 중 오류 발생:", e);
     }
-  };
+  }
 
-  function syncPreview() {
-    previewCanvasBox.innerHTML = '';
-    const clone = canvasBox.cloneNode(true);
-    const scale = Math.min(200 / history.present.canvasW, 200 / history.present.canvasH);
+  function changeAspectRatio(ratio) {
+    try {
+      const canvas = document.getElementById('main-canvas');
+      if (ratio === '1:1') canvas.style.aspectRatio = '1 / 1';
+      else if (ratio === '16:9') canvas.style.aspectRatio = '16 / 9';
+      else if (ratio === '4:5') canvas.style.aspectRatio = '4 / 5';
+      else canvas.style.aspectRatio = 'unset';
+      recordState();
+    } catch (e) {
+      console.error("[QA Error] 화면비 변경 오류:", e);
+    }
+  }
 
-    clone.style.transform = `scale(${scale})`;
-    clone.style.transformOrigin = '0 0';
-    clone.style.position = 'absolute';
-    clone.style.top = `${(200 - history.present.canvasH * scale) / 2}px`;
-    clone.style.left = `${(200 - history.present.canvasW * scale) / 2}px`;
+  function changeZoom(scale) {
+    try {
+      const canvas = document.getElementById('main-canvas');
+      canvas.style.transform = `scale(${scale})`;
+      recordState();
+    } catch (e) {
+      console.error("[QA Error] 배율 변경 오류:", e);
+    }
+  }
 
-    previewCanvasBox.appendChild(clone);
+  // JSON 로드 및 예외 안전 처리
+  function safeLoadJSON(fileInput) {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        applyCanvasState(e.target.result);
+        recordState();
+        updateSysMsg("JSON 파일을 성공적으로 불러왔습니다.");
+      } catch (err) {
+        console.error("[QA Error] 올바르지 않은 JSON 데이터:", err);
+        alert("유효한 JSON 템플릿 파일이 아닙니다.");
+      }
+    };
+    reader.onerror = function(err) {
+      console.error("[QA Error] 파일 읽기 실패:", err);
+    };
+    reader.readAsText(file);
   }
 
   function exportJSON() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(history.present));
-    const a = document.createElement('a');
-    a.href = dataStr;
-    a.download = `template_${Date.now()}.json`;
-    a.click();
+    try {
+      const state = getCurrentCanvasState();
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'template.json';
+      a.click();
+    } catch (e) {
+      console.error("[QA Error] JSON 저장 실패:", e);
+    }
   }
 
-  document.getElementById('jsonInput').onchange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      commitState(JSON.parse(evt.target.result));
-    };
-    reader.readAsText(file);
-  };
+  function updateSysMsg(msg) {
+    document.getElementById('sys-msg').innerText = msg;
+  }
 
-  render(history.present);
+  // 초기 상태 저장
+  window.onload = function() {
+    recordState();
+  };
 </script>
 </body>
 </html>
