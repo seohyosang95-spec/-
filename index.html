@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -55,12 +55,27 @@
     .canvas-item {
       position: absolute; cursor: move; user-select: none;
       border: 1px dashed transparent; padding: 4px; box-sizing: border-box;
+      min-width: 30px; min-height: 20px;
     }
     .canvas-item.selected { border-color: #4A90E2; }
     .canvas-item img { width: 100%; height: 100%; display: block; pointer-events: none; }
 
+    /* 크기 조절 핸들 (Resize Handle) */
+    .resize-handle {
+      display: none;
+      position: absolute;
+      right: -5px; bottom: -5px;
+      width: 10px; height: 10px;
+      background-color: #4A90E2;
+      border: 1px solid #fff;
+      cursor: se-resize;
+      z-index: 10;
+    }
+    .canvas-item.selected .resize-handle { display: block; }
+
     /* 미리보기 박스 */
     #preview-box { width: 100%; height: 100%; position: relative; transform-origin: top left; pointer-events: none; }
+    #preview-box .resize-handle { display: none !important; }
 
     footer { background: #1e1e2f; color: #00ffcc; padding: 8px 20px; font-size: 0.85rem; font-family: monospace; }
   </style>
@@ -71,12 +86,14 @@
   <header>프리미엄 템플릿 & 이미지 스튜디오 QA</header>
 
   <div class="toolbar">
-    <!-- 배경 설정 -->
+    <!-- 배경 설정 (프리셋 + 자유 색상 선택) -->
     <div class="tool-group">
       <a role="button" tabindex="0" class="btn-theme" onclick="setBg('#ffffff')" onkeydown="handleKeyClick(event, () => setBg('#ffffff'))">⚪ 흰색</a>
       <a role="button" tabindex="0" class="btn-theme" onclick="setBg('#121212')" onkeydown="handleKeyClick(event, () => setBg('#121212'))">⬛ 다크</a>
       <a role="button" tabindex="0" class="btn-theme" onclick="setBg('linear-gradient(135deg, #667eea, #764ba2)')" onkeydown="handleKeyClick(event, () => setBg('linear-gradient(135deg, #667eea, #764ba2)'))">🔮 퍼플</a>
       <a role="button" tabindex="0" class="btn-theme" onclick="setBg('linear-gradient(135deg, #11998e, #38ef7d)')" onkeydown="handleKeyClick(event, () => setBg('linear-gradient(135deg, #11998e, #38ef7d)'))">🌊 에메랄드</a>
+      <span style="font-size:0.85rem; margin-left:4px;">자유 배경색:</span>
+      <input type="color" id="bg-custom-color" value="#ffffff" onchange="setBg(this.value)" style="cursor:pointer;" aria-label="자유 배경색 선택">
     </div>
 
     <!-- 규격 및 배율 -->
@@ -116,7 +133,7 @@
         <option value="Courier New">Monospace</option>
       </select>
       <span>크기:</span>
-      <input type="number" id="font-size" value="24" min="10" max="100" style="width: 50px;" onchange="updateSelectedStyle('fontSize', this.value + 'px')">
+      <input type="number" id="font-size" value="24" min="10" max="200" style="width: 50px;" onchange="updateSelectedStyle('fontSize', this.value + 'px')">
     </div>
 
     <!-- Undo / Redo 및 저장 -->
@@ -132,7 +149,7 @@
   <main>
     <div class="canvas-panel">
       <div class="panel-header">
-        <span>작업 캔버스 (클릭 선택, 드래그 & 방향키 이동, Delete 삭제)</span>
+        <span>작업 캔버스 (클릭 선택, 드래그 이동/리사이즈, 방향키 이동, Delete 삭제)</span>
         <span>MAIN CANVAS</span>
       </div>
       <div class="canvas-body">
@@ -152,13 +169,14 @@
   </main>
 
   <footer>
-    <div><span>[SYSTEM]</span> <span id="sys-msg">에디터 준비 완료. 방향키(1px/10px) 및 Delete 키 조작이 가능합니다.</span></div>
+    <div><span>[SYSTEM]</span> <span id="sys-msg">에디터 준비 완료. 우측 하단 파란색 핸들을 드래그하여 크기를 조절할 수 있습니다.</span></div>
   </footer>
 </div>
 
 <script>
   let selectedElement = null;
   let activeDrag = null;
+  let activeResize = null;
 
   // --------------------------------------------------
   // 1. Undo / Redo 히스토리 관리
@@ -181,10 +199,12 @@
           type: item.dataset.type,
           left: item.style.left,
           top: item.style.top,
+          width: item.style.width,
+          height: item.style.height,
           color: item.style.color,
           fontSize: item.style.fontSize,
           fontFamily: item.style.fontFamily,
-          content: item.dataset.type === 'text' ? item.innerText : item.querySelector('img').src
+          content: item.dataset.type === 'text' ? item.childNodes[0].nodeValue : item.querySelector('img').src
         }))
       };
       historyStack.push(JSON.stringify(state));
@@ -222,6 +242,10 @@
       canvas.style.height = state.height || '360px';
       canvas.innerHTML = '';
 
+      if (state.background && state.background.startsWith('#')) {
+        document.getElementById('bg-custom-color').value = rgbToHex(state.background);
+      }
+
       state.items.forEach(data => {
         if (data.type === 'text') renderText(data);
         else if (data.type === 'image') renderImage(data);
@@ -255,14 +279,19 @@
     el.id = data.id;
     el.className = 'canvas-item';
     el.dataset.type = 'text';
-    el.innerText = data.content;
     el.contentEditable = true;
+    
+    // 텍스트 내용 삽입
+    el.appendChild(document.createTextNode(data.content));
     
     Object.assign(el.style, {
       left: data.left, top: data.top, color: data.color,
       fontSize: data.fontSize, fontFamily: data.fontFamily
     });
+    if (data.width) el.style.width = data.width;
+    if (data.height) el.style.height = data.height;
 
+    addResizeHandle(el);
     attachItemEvents(el);
     document.getElementById('main-canvas').appendChild(el);
   }
@@ -282,6 +311,7 @@
         id: 'item_' + Date.now(),
         type: 'image',
         left: '100px', top: '100px',
+        width: '150px', height: '150px',
         content: e.target.result
       };
       renderImage(data);
@@ -298,16 +328,45 @@
     
     const img = document.createElement('img');
     img.src = data.content;
-    img.style.width = '150px';
     el.appendChild(img);
 
-    Object.assign(el.style, { left: data.left, top: data.top });
+    Object.assign(el.style, {
+      left: data.left, top: data.top,
+      width: data.width || '150px',
+      height: data.height || '150px'
+    });
+
+    addResizeHandle(el);
     attachItemEvents(el);
     document.getElementById('main-canvas').appendChild(el);
   }
 
+  // 조절 핸들 추가 함수
+  function addResizeHandle(el) {
+    const handle = document.createElement('div');
+    handle.className = 'resize-handle';
+    
+    handle.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      selectElement(el);
+      
+      const startFontSize = parseFloat(window.getComputedStyle(el).fontSize);
+      activeResize = {
+        startX: e.clientX,
+        startY: e.clientY,
+        startWidth: el.offsetWidth,
+        startHeight: el.offsetHeight,
+        startFontSize: startFontSize
+      };
+    });
+    
+    el.appendChild(handle);
+  }
+
   function attachItemEvents(el) {
     el.addEventListener('mousedown', (e) => {
+      if (e.target.classList.contains('resize-handle')) return;
       e.stopPropagation();
       selectElement(el);
       activeDrag = {
@@ -319,8 +378,29 @@
     el.addEventListener('blur', () => recordState());
   }
 
-  // 드래그 및 방향키 이동
+  // 마우스 이동 (드래그 이동 및 크기 조절)
   window.addEventListener('mousemove', (e) => {
+    // 1. 크기 조절 (Resize)
+    if (activeResize && selectedElement) {
+      const dx = e.clientX - activeResize.startX;
+      const dy = e.clientY - activeResize.startY;
+
+      if (selectedElement.dataset.type === 'image') {
+        const newWidth = Math.max(30, activeResize.startWidth + dx);
+        const newHeight = Math.max(30, activeResize.startHeight + dy);
+        selectedElement.style.width = newWidth + 'px';
+        selectedElement.style.height = newHeight + 'px';
+      } else if (selectedElement.dataset.type === 'text') {
+        // 텍스트는 드래그 거리에 맞춰 글자 크기(fontSize) 실시간 반영
+        const newSize = Math.max(10, Math.min(200, activeResize.startFontSize + (dx / 3)));
+        selectedElement.style.fontSize = newSize + 'px';
+        document.getElementById('font-size').value = Math.round(newSize);
+      }
+      syncPreview();
+      return;
+    }
+
+    // 2. 드래그 이동 (Drag Move)
     if (activeDrag && selectedElement) {
       selectedElement.style.left = (e.clientX - activeDrag.startX) + 'px';
       selectedElement.style.top = (e.clientY - activeDrag.startY) + 'px';
@@ -329,8 +409,9 @@
   });
 
   window.addEventListener('mouseup', () => {
-    if (activeDrag) {
+    if (activeDrag || activeResize) {
       activeDrag = null;
+      activeResize = null;
       recordState();
     }
   });
@@ -398,9 +479,18 @@
     }
   }
 
-  function setBg(color) {
-    document.getElementById('main-canvas').style.background = color;
-    recordState();
+  function setBg(colorStyle) {
+    try {
+      const canvas = document.getElementById('main-canvas');
+      canvas.style.background = colorStyle;
+      
+      if (colorStyle.startsWith('#')) {
+        document.getElementById('bg-custom-color').value = colorStyle;
+      }
+      recordState();
+    } catch (e) {
+      console.error("[QA Error] 배경색 변경 실패:", e);
+    }
   }
 
   function changeRatio(val) {
@@ -437,6 +527,7 @@
 
   function rgbToHex(rgb) {
     if (!rgb) return '#000000';
+    if (rgb.startsWith('#')) return rgb;
     const res = rgb.match(/\d+/g);
     return res ? "#" + res.slice(0, 3).map(x => (+x).toString(16).padStart(2, '0')).join('') : rgb;
   }
@@ -476,4 +567,4 @@
   window.onload = () => recordState();
 </script>
 </body>
-</html>
+</html> 
