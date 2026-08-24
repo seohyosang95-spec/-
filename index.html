@@ -303,11 +303,17 @@
       <button class="btn" onclick="addText()"><i class="fa-solid fa-font"></i> 글씨 추가</button>
     </div>
 
-    <!-- 텍스트 속성 커스텀 (색상, 폰트 등) -->
+    <!-- 텍스트 & 테두리 커스텀 -->
     <div class="tool-group">
-      <span style="font-size:11px; color:var(--text-muted);">텍스트 색상:</span>
+      <span style="font-size:11px; color:var(--text-muted);">글자색:</span>
       <input type="color" id="fillColorPicker" class="color-picker" value="#8b5cf6">
       
+      <span style="font-size:11px; color:var(--text-muted);">테두리색:</span>
+      <input type="color" id="strokeColorPicker" class="color-picker" value="#000000">
+
+      <span style="font-size:11px; color:var(--text-muted);">두께:</span>
+      <input type="number" id="strokeWidthInput" class="input-num" value="0" min="0" max="10">
+
       <span style="font-size:11px; color:var(--text-muted);">폰트:</span>
       <select id="fontSelect" class="btn">
         <option value="Segoe UI">Default</option>
@@ -317,7 +323,7 @@
       </select>
 
       <span style="font-size:11px; color:var(--text-muted);">크기:</span>
-      <input type="number" id="fontSizeInput" class="input-num" value="24" min="10" max="100">
+      <input type="number" id="fontSizeInput" class="input-num" value="28" min="10" max="100">
     </div>
 
     <!-- 히스토리 & 삭제 -->
@@ -394,6 +400,8 @@
   const zoomSelect = document.getElementById('zoomSelect');
   const aspectRatioSelect = document.getElementById('aspectRatioSelect');
   const fillColorPicker = document.getElementById('fillColorPicker');
+  const strokeColorPicker = document.getElementById('strokeColorPicker');
+  const strokeWidthInput = document.getElementById('strokeWidthInput');
   const fontSelect = document.getElementById('fontSelect');
   const fontSizeInput = document.getElementById('fontSizeInput');
   const consoleLogs = document.getElementById('consoleLogs');
@@ -487,6 +495,8 @@
       type: 'text',
       x: 50, y: 50,
       color: fillColorPicker.value,
+      strokeColor: strokeColorPicker.value,
+      strokeWidth: parseInt(strokeWidthInput.value),
       font: fontSelect.value,
       fontSize: parseInt(fontSizeInput.value),
       text: '샘플 텍스트'
@@ -504,8 +514,10 @@
     commitState({ ...history.present, selectedId: null, objects: nextObjs });
   }
 
-  // 실시간 커스텀 속성 변경 (색상, 폰트 등)
+  // 실시간 커스텀 속성 변경 (글자색, 테두리색, 테두리 두께, 폰트 등)
   fillColorPicker.oninput = (e) => updateSelectedProp('color', e.target.value);
+  strokeColorPicker.oninput = (e) => updateSelectedProp('strokeColor', e.target.value);
+  strokeWidthInput.onchange = (e) => updateSelectedProp('strokeWidth', parseInt(e.target.value));
   fontSelect.onchange = (e) => updateSelectedProp('font', e.target.value);
   fontSizeInput.onchange = (e) => updateSelectedProp('fontSize', parseInt(e.target.value));
 
@@ -524,12 +536,10 @@
   window.addEventListener('keydown', (e) => {
     if (e.target.isContentEditable || e.target.tagName === 'INPUT') return;
 
-    // Delete / Backspace
     if (e.key === 'Delete' || e.key === 'Backspace') {
       deleteSelectedObject();
     }
     
-    // 방향키 조작
     if (history.present.selectedId && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
       e.preventDefault();
       const step = e.shiftKey ? 10 : 1;
@@ -570,7 +580,12 @@
       el.style.color = obj.color;
       el.style.fontFamily = obj.font;
       el.style.fontSize = obj.fontSize + 'px';
-      
+
+      // 텍스트 테두리(외곽선) 적용
+      const strokeW = obj.strokeWidth || 0;
+      const strokeC = obj.strokeColor || '#000000';
+      el.style.webkitTextStroke = `${strokeW}px ${strokeC}`;
+
       el.onblur = (e) => {
         obj.text = e.target.textContent;
         syncPreview();
@@ -579,6 +594,8 @@
       // 속성 툴바 값 세팅
       if (obj.id === state.selectedId) {
         fillColorPicker.value = obj.color || '#8b5cf6';
+        strokeColorPicker.value = obj.strokeColor || '#000000';
+        strokeWidthInput.value = obj.strokeWidth !== undefined ? obj.strokeWidth : 0;
         if (obj.font) fontSelect.value = obj.font;
         if (obj.fontSize) fontSizeInput.value = obj.fontSize;
       }
