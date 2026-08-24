@@ -3,69 +3,348 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>이미지 템플릿 편집기 QA 검증 시스템</title>
+  <title>프리미엄 템플릿 & 이미지 스튜디오 QA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { box-sizing: border-box; }
-    body { font-family: sans-serif; margin: 20px; background-color: #f5f5f7; }
-    .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #ddd; }
-    button, input[type="file"], select { padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
-    button:hover { background: #f0f0f0; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .editor-layout { display: flex; gap: 20px; justify-content: center; align-items: center; background: #eef2f5; padding: 20px; border-radius: 8px; min-height: 450px; }
-    .canvas-container { background: #fff; border: 2px dashed #bbb; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; transition: all 0.3s ease; }
-    .canvas-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .canvas-placeholder { color: #888; text-align: center; font-size: 14px; }
-    
-    /* Aspect Ratios */
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+      --surface: rgba(255, 255, 255, 0.95);
+      --surface-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 15px;
+      color: var(--text-main);
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 1050px;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* 헤더 디자인 */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-title i {
+      font-size: 28px;
+      color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+      padding: 10px;
+      border-radius: 12px;
+    }
+
+    .header-title h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #f1f5f9;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .status-badge.saved { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+    .status-badge.dirty { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+
+    /* 툴바 디자인 */
+    .toolbar-card {
+      background: var(--surface-card);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn:hover:not(:disabled) {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+
+    .btn:active:not(:disabled) { transform: translateY(0); }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+      color: #ffffff;
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    select.btn {
+      appearance: none;
+      padding-right: 32px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2064748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px;
+    }
+
+    /* 워크스페이스 레이아웃 */
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .canvas-wrapper {
+      background: #f8fafc;
+      border-radius: 20px;
+      min-height: 480px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      border: 2px dashed #cbd5e1;
+      padding: 24px;
+      overflow: hidden;
+      transition: border-color 0.3s ease;
+    }
+
+    .canvas-wrapper.drag-over {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .canvas-box {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .canvas-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Aspect Ratio Presets */
     .ratio-1-1 { width: 360px; height: 360px; }
     .ratio-16-9 { width: 480px; height: 270px; }
     .ratio-4-5 { width: 300px; height: 375px; }
-    
-    .status-log { margin-top: 15px; padding: 10px; background: #222; color: #00ff66; font-family: monospace; font-size: 12px; border-radius: 6px; max-height: 120px; overflow-y: auto; }
+
+    .drop-zone-text {
+      text-align: center;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .drop-zone-text i {
+      font-size: 48px;
+      margin-bottom: 12px;
+      color: #94a3b8;
+    }
+
+    .drop-zone-text p { font-size: 15px; font-weight: 500; }
+    .drop-zone-text span { font-size: 12px; color: #94a3b8; margin-top: 4px; display: block; }
+
+    /* 콘솔 로그 패널 */
+    .console-panel {
+      background: #0f172a;
+      border-radius: 16px;
+      padding: 16px;
+      color: #f8fafc;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 13px;
+    }
+
+    .console-header {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .console-logs {
+      max-height: 100px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .log-entry { display: flex; gap: 8px; }
+    .log-time { color: #64748b; }
+    .log-success { color: #34d399; }
+    .log-error { color: #f87171; }
+    .log-info { color: #38bdf8; }
+
+    input[type="file"] { display: none; }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>🖼️ 이미지 템플릿 편집기 (통합 모듈)</h2>
-  
-  <div class="toolbar">
-    <!-- 파일 선택 및 검증 -->
-    <input type="file" id="imageInput" accept="image/png, image/jpeg">
-    
-    <!-- 화면비 설정 -->
-    <select id="aspectRatioSelect">
-      <option value="ratio-1-1">1:1 (정사각형)</option>
-      <option value="ratio-16-9">16:9 (와이드)</option>
-      <option value="ratio-4-5">4:5 (세로형)</option>
-    </select>
+<div class="app-container">
+  <!-- 상단 타이틀 & 저장 상태 -->
+  <header class="header">
+    <div class="header-title">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+      <div>
+        <h1>스튜디오 QA 템플릿 에디터</h1>
+      </div>
+    </div>
+    <div id="statusBadge" class="status-badge saved">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>변경사항 저장됨</span>
+    </div>
+  </header>
 
-    <!-- Undo / Redo -->
-    <button id="btnUndo" disabled>↩️ Undo</button>
-    <button id="btnRedo" disabled>↪️ Redo</button>
+  <!-- 메인 제어 툴바 -->
+  <div class="toolbar-card">
+    <div class="tool-group">
+      <button class="btn btn-primary" onclick="document.getElementById('imageInput').click()">
+        <i class="fa-solid fa-image"></i> 이미지 선택
+      </button>
+      <input type="file" id="imageInput" accept="image/png, image/jpeg">
 
-    <!-- JSON 저장 및 복원 -->
-    <button id="btnExportJSON">📥 JSON 내보내기</button>
-    <input type="file" id="jsonInput" accept=".json" style="display: none;">
-    <button id="btnImportJSON">📤 JSON 불러오기</button>
-  </div>
+      <select id="aspectRatioSelect" class="btn">
+        <option value="ratio-1-1">1:1 (정사각형)</option>
+        <option value="ratio-16-9">16:9 (와이드)</option>
+        <option value="ratio-4-5">4:5 (세로형)</option>
+      </select>
+    </div>
 
-  <!-- 캔버스 영역 -->
-  <div class="editor-layout">
-    <div id="canvasBox" class="canvas-container ratio-1-1">
-      <div id="placeholder" class="canvas-placeholder">PNG/JPEG 이미지를 업로드하세요</div>
-      <img id="previewImage" style="display: none;" alt="Preview">
+    <div class="tool-group">
+      <button id="btnUndo" class="btn" disabled title="실행 취소">
+        <i class="fa-solid fa-rotate-left"></i>
+      </button>
+      <button id="btnRedo" class="btn" disabled title="다시 실행">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+      <div style="width: 1px; height: 24px; background: var(--border); margin: 0 4px;"></div>
+      <button id="btnExportJSON" class="btn">
+        <i class="fa-solid fa-download"></i> JSON 내보내기
+      </button>
+      <button id="btnImportJSON" class="btn" onclick="document.getElementById('jsonInput').click()">
+        <i class="fa-solid fa-upload"></i> JSON 불러오기
+      </button>
+      <input type="file" id="jsonInput" accept=".json">
     </div>
   </div>
 
-  <!-- 시스템 로그 표시 -->
-  <div class="status-log" id="statusLog">> 시스템 준비 완료.</div>
+  <!-- 메인 캔버스 영역 -->
+  <main class="workspace">
+    <div id="dropZone" class="canvas-wrapper">
+      <div id="canvasBox" class="canvas-box ratio-1-1">
+        <div id="placeholder" class="drop-zone-text">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <p>PNG 또는 JPEG 파일을 업로드하거나 드래그하세요</p>
+          <span>안전한 유효성 검사 및 실시간 스키마 체크 지원</span>
+        </div>
+        <img id="previewImage" style="display: none;" alt="Preview Target">
+      </div>
+    </div>
+  </main>
+
+  <!-- 실시간 검증 시스템 콘솔 -->
+  <footer class="console-panel">
+    <div class="console-header">
+      <span>System Audit Logs</span>
+      <span id="logCount">0 Events</span>
+    </div>
+    <div id="consoleLogs" class="console-logs">
+      <div class="log-entry">
+        <span class="log-time">[System]</span>
+        <span class="log-info">에디터 라이브러리가 준비되었습니다. 테스트를 진행하세요.</span>
+      </div>
+    </div>
+  </footer>
 </div>
 
 <script>
   // ==========================================
-  // 1. Undo / Redo 히스토리 클래스
+  // 1. Undo / Redo 상태 관리 히스토리 엔진
   // ==========================================
   class EditorHistory {
     constructor(initialState) {
@@ -95,7 +374,7 @@
   }
 
   // ==========================================
-  // 2. 상태 관리 및 변수 초기화
+  // 2. 초기 상태 및 글로벌 변수
   // ==========================================
   const initialState = {
     imageSrc: null,
@@ -104,36 +383,56 @@
   };
 
   const history = new EditorHistory(initialState);
-  let isDirty = false; // 미저장 이탈 방지 플래그
+  let isDirty = false;
+  let eventCounter = 0;
 
-  // DOM 요소를 가져옵니다.
+  // DOM Elements
   const imageInput = document.getElementById('imageInput');
+  const jsonInput = document.getElementById('jsonInput');
   const aspectRatioSelect = document.getElementById('aspectRatioSelect');
   const btnUndo = document.getElementById('btnUndo');
   const btnRedo = document.getElementById('btnRedo');
   const btnExportJSON = document.getElementById('btnExportJSON');
-  const btnImportJSON = document.getElementById('btnImportJSON');
-  const jsonInput = document.getElementById('jsonInput');
   const canvasBox = document.getElementById('canvasBox');
   const previewImage = document.getElementById('previewImage');
   const placeholder = document.getElementById('placeholder');
-  const statusLog = document.getElementById('statusLog');
+  const consoleLogs = document.getElementById('consoleLogs');
+  const statusBadge = document.getElementById('statusBadge');
+  const dropZone = document.getElementById('dropZone');
 
-  function log(message) {
+  // ==========================================
+  // 3. UI 업데이트 및 로깅 시스템
+  // ==========================================
+  function writeLog(message, type = 'info') {
+    eventCounter++;
+    document.getElementById('logCount').innerText = `${eventCounter} Events`;
+    
     const time = new Date().toLocaleTimeString();
-    statusLog.innerHTML += `<br>[${time}] ${message}`;
-    statusLog.scrollTop = statusLog.scrollHeight;
+    const typeClass = type === 'error' ? 'log-error' : type === 'success' ? 'log-success' : 'log-info';
+    
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span class="log-time">[${time}]</span><span class="${typeClass}">${message}</span>`;
+    
+    consoleLogs.appendChild(entry);
+    consoleLogs.scrollTop = consoleLogs.scrollHeight;
   }
 
-  // ==========================================
-  // 3. UI 업데이트 및 렌더링 함수
-  // ==========================================
+  function setDirty(dirty) {
+    isDirty = dirty;
+    if (dirty) {
+      statusBadge.className = 'status-badge dirty';
+      statusBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i><span>수정사항 있음</span>`;
+    } else {
+      statusBadge.className = 'status-badge saved';
+      statusBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>저장됨</span>`;
+    }
+  }
+
   function render(state) {
-    // 1) 화면비 업데이트
-    canvasBox.className = `canvas-container ${state.aspectRatio}`;
+    canvasBox.className = `canvas-box ${state.aspectRatio}`;
     aspectRatioSelect.value = state.aspectRatio;
 
-    // 2) 이미지 표시 업데이트
     if (state.imageSrc) {
       previewImage.src = state.imageSrc;
       previewImage.style.display = 'block';
@@ -143,87 +442,97 @@
       placeholder.style.display = 'block';
     }
 
-    // 3) Undo / Redo 버튼 활성화 상태 조절
     btnUndo.disabled = !history.canUndo();
     btnRedo.disabled = !history.canRedo();
   }
 
   function commitStateChange(newState) {
     history.pushState(newState);
-    isDirty = true;
+    setDirty(true);
     render(history.present);
   }
 
   // ==========================================
-  // 4. 이벤트 리스너 및 기능 모듈
+  // 4. 이벤트 핸들러 및 유효성 검사
   // ==========================================
-
-  // (1) 이미지 업로드 및 포맷 검증 (PNG / JPEG 전용)
-  imageInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
+  function processFile(file) {
     if (!file) return;
 
     const validTypes = ['image/png', 'image/jpeg'];
     if (!validTypes.includes(file.type)) {
-      alert('⚠️ 잘못된 파일 형식입니다. PNG 또는 JPEG 파일만 업로드할 수 있습니다.');
-      log('❌ 파일 거부: PNG/JPEG가 아닌 파일 선택됨');
-      imageInput.value = '';
+      writeLog(`❌ 파일 거부: 올바르지 않은 타입 (${file.type || '알 수 없음'})`, 'error');
+      alert('⚠️ 지원하지 않는 파일 형식입니다. PNG 또는 JPEG 파일만 지원됩니다.');
       return;
     }
 
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const newState = {
+    reader.onload = (e) => {
+      commitStateChange({
         ...history.present,
-        imageSrc: event.target.result,
+        imageSrc: e.target.result,
         fileName: file.name
-      };
-      commitStateChange(newState);
-      log(`✅ 이미지로드 완료: ${file.name}`);
+      });
+      writeLog(`✅ 이미지 로드 성공: ${file.name}`, 'success');
     };
     reader.readAsDataURL(file);
+  }
+
+  // 드래그 앤 드롭 지원
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
   });
 
-  // (2) 화면비 변경 처리
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('drag-over');
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) {
+      processFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  imageInput.addEventListener('change', (e) => {
+    processFile(e.target.files[0]);
+    imageInput.value = '';
+  });
+
   aspectRatioSelect.addEventListener('change', (e) => {
-    const newState = {
+    commitStateChange({
       ...history.present,
       aspectRatio: e.target.value
-    };
-    commitStateChange(newState);
-    log(`📐 화면비 변경: ${e.target.value}`);
+    });
+    writeLog(`📐 화면비 적용: ${e.target.value}`, 'info');
   });
 
-  // (3) Undo / Redo 동작
   btnUndo.addEventListener('click', () => {
-    const previousState = history.undo();
-    render(previousState);
-    log('↩️ Undo 실행');
+    render(history.undo());
+    writeLog('↩️ 실행 취소(Undo) 적용', 'info');
   });
 
   btnRedo.addEventListener('click', () => {
-    const nextState = history.redo();
-    render(nextState);
-    log('↪️ Redo 실행');
+    render(history.redo());
+    writeLog('↪️ 다시 실행(Redo) 적용', 'info');
   });
 
-  // (4) JSON 템플릿 저장 (내보내기)
+  // JSON 내보내기
   btnExportJSON.addEventListener('click', () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(history.present, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `template_${Date.now()}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-    
-    isDirty = false; // 저장 완료 시 미저장 이탈 상태 해제
-    log('📥 템플릿 JSON 파일 출력 완료');
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", `template_${Date.now()}.json`);
+    document.body.appendChild(dlAnchor);
+    dlAnchor.click();
+    dlAnchor.remove();
+
+    setDirty(false);
+    writeLog('📥 템플릿 JSON 파일 출력 완', 'success');
   });
 
-  // (5) JSON 템플릿 안전하게 불러오기 (스키마 검증)
-  btnImportJSON.addEventListener('click', () => jsonInput.click());
-
+  // JSON 복원 및 스키마 유효성 검사
   jsonInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -231,32 +540,28 @@
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const parsedData = JSON.parse(event.target.result);
-
-        // 필수 데이터 스키마 유효성 검사
-        if (typeof parsedData !== 'object' || !parsedData.hasOwnProperty('aspectRatio')) {
-          throw new Error("유효한 템플릿 JSON 형식이 아닙니다.");
+        const parsed = JSON.parse(event.target.result);
+        if (!parsed || typeof parsed !== 'object' || !parsed.hasOwnProperty('aspectRatio')) {
+          throw new Error("올바른 스키마가 아닙니다.");
         }
-
-        commitStateChange(parsedData);
-        log(`📤 템플릿 JSON 복원 완료: ${file.name}`);
+        commitStateChange(parsed);
+        writeLog(`📤 JSON 템플릿 복원 성공: ${file.name}`, 'success');
       } catch (err) {
-        alert(`⚠️ JSON 복원 실패: ${err.message}`);
-        log(`❌ JSON 복원 실패 (손상되거나 유효하지 않은 파일)`);
+        writeLog(`❌ JSON 데이터 파싱 실패: ${err.message}`, 'error');
+        alert(`⚠️ JSON 복원 오류: 유효한 템플릿 파일이 아닙니다.`);
       }
       jsonInput.value = '';
     };
     reader.readAsText(file);
   });
 
-  // (6) 미저장 이탈 방지 처리 (Unsaved Changes Warning)
+  // 창 이탈 방지
   window.addEventListener('beforeunload', (e) => {
     if (isDirty) {
       e.preventDefault();
-      e.returnValue = ''; // 브라우저 기본 이탈 알림 팝업 활성화
+      e.returnValue = '';
     }
   });
 </script>
-
 </body>
 </html>
