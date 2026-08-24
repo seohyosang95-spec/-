@@ -169,7 +169,7 @@
   </main>
 
   <footer>
-    <div><span>[SYSTEM]</span> <span id="sys-msg">에디터 준비 완료. 우측 하단 파란색 핸들을 드래그하여 크기를 조절할 수 있습니다.</span></div>
+    <div><span>[SYSTEM]</span> <span id="sys-msg">에디터 준비 완료. 지원 형식(PNG, JPG/JPEG) 외 파일 입력 시 거부 사유가 안내됩니다.</span></div>
   </footer>
 </div>
 
@@ -257,7 +257,7 @@
   }
 
   // --------------------------------------------------
-  // 2. 텍스트 & 이미지 생성 및 조작
+  // 2. 텍스트 & 이미지 생성 및 검증 (T03-C09, T03-C10 완벽 대응)
   // --------------------------------------------------
   function addText() {
     const data = {
@@ -272,6 +272,7 @@
     };
     renderText(data);
     recordState();
+    updateMsg("새 텍스트 상자가 추가되었습니다.");
   }
 
   function renderText(data) {
@@ -281,7 +282,6 @@
     el.dataset.type = 'text';
     el.contentEditable = true;
     
-    // 텍스트 내용 삽입
     el.appendChild(document.createTextNode(data.content));
     
     Object.assign(el.style, {
@@ -300,9 +300,14 @@
     const file = input.files[0];
     if (!file) return;
 
-    if (!['image/png', 'image/jpeg'].includes(file.type)) {
-      alert('PNG 또는 JPEG 파일만 업로드할 수 있습니다.');
-      return;
+    // T03-C09, T03-C10: 비지원 파일 거부 사유 명시 및 기존 작업 유지
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!validTypes.includes(file.type.toLowerCase())) {
+      const errorMsg = `[업로드 거부] 지원하지 않는 파일 형식입니다. (선택된 파일: ${file.name} / ${file.type || '알 수 없음'}). PNG 및 JPEG/JPG 파일만 불러올 수 있습니다.`;
+      updateMsg(errorMsg);
+      alert(errorMsg);
+      input.value = ''; // 파일 입력 초기화
+      return; // 기존 작업은 완벽히 유지됨
     }
 
     const reader = new FileReader();
@@ -316,8 +321,10 @@
       };
       renderImage(data);
       recordState();
+      updateMsg(`이미지 불러오기 성공: ${file.name}`);
     };
     reader.readAsDataURL(file);
+    input.value = '';
   }
 
   function renderImage(data) {
@@ -341,7 +348,6 @@
     document.getElementById('main-canvas').appendChild(el);
   }
 
-  // 조절 핸들 추가 함수
   function addResizeHandle(el) {
     const handle = document.createElement('div');
     handle.className = 'resize-handle';
@@ -380,7 +386,6 @@
 
   // 마우스 이동 (드래그 이동 및 크기 조절)
   window.addEventListener('mousemove', (e) => {
-    // 1. 크기 조절 (Resize)
     if (activeResize && selectedElement) {
       const dx = e.clientX - activeResize.startX;
       const dy = e.clientY - activeResize.startY;
@@ -391,7 +396,6 @@
         selectedElement.style.width = newWidth + 'px';
         selectedElement.style.height = newHeight + 'px';
       } else if (selectedElement.dataset.type === 'text') {
-        // 텍스트는 드래그 거리에 맞춰 글자 크기(fontSize) 실시간 반영
         const newSize = Math.max(10, Math.min(200, activeResize.startFontSize + (dx / 3)));
         selectedElement.style.fontSize = newSize + 'px';
         document.getElementById('font-size').value = Math.round(newSize);
@@ -400,7 +404,6 @@
       return;
     }
 
-    // 2. 드래그 이동 (Drag Move)
     if (activeDrag && selectedElement) {
       selectedElement.style.left = (e.clientX - activeDrag.startX) + 'px';
       selectedElement.style.top = (e.clientY - activeDrag.startY) + 'px';
@@ -433,6 +436,7 @@
         selectedElement.remove();
         selectedElement = null;
         recordState();
+        updateMsg("선택된 요소가 삭제되었습니다.");
         return;
       } else return;
 
@@ -442,7 +446,6 @@
       recordState();
     }
 
-    // Ctrl+Z / Ctrl+Y 단축키
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
       if (e.shiftKey) redo(); else undo();
       e.preventDefault();
@@ -488,6 +491,7 @@
         document.getElementById('bg-custom-color').value = colorStyle;
       }
       recordState();
+      updateMsg("배경 스타일이 변경되었습니다.");
     } catch (e) {
       console.error("[QA Error] 배경색 변경 실패:", e);
     }
@@ -532,7 +536,6 @@
     return res ? "#" + res.slice(0, 3).map(x => (+x).toString(16).padStart(2, '0')).join('') : rgb;
   }
 
-  // JSON 저장 및 불러오기 예외 처리
   function exportJSON() {
     try {
       const jsonStr = historyStack[historyStep];
@@ -541,6 +544,7 @@
       a.href = URL.createObjectURL(blob);
       a.download = 'template_qa.json';
       a.click();
+      updateMsg("작업 내역이 JSON 파일로 다운로드되었습니다.");
     } catch (e) {
       console.error("[QA Error] JSON 저장 오류:", e);
     }
@@ -550,21 +554,32 @@
     const file = input.files[0];
     if (!file) return;
 
+    if (!file.name.endsWith('.json')) {
+      const errorMsg = `[불러오기 거부] 유효한 JSON 파일이 아닙니다. (선택된 파일: ${file.name})`;
+      updateMsg(errorMsg);
+      alert(errorMsg);
+      input.value = '';
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = function(e) {
       try {
         restoreState(e.target.result);
         recordState();
-        updateMsg("JSON 복원이 완료되었습니다.");
+        updateMsg("JSON 작업 내역 복원이 완료되었습니다.");
       } catch (err) {
+        const parseErrorMsg = "[복원 실패] 파싱할 수 없는 파일 형식입니다. 기존 작업을 유지합니다.";
         console.error("[QA Error] JSON 읽기 예외:", err);
-        alert("유효하지 않은 JSON 파일입니다.");
+        updateMsg(parseErrorMsg);
+        alert(parseErrorMsg);
       }
     };
     reader.readAsText(file);
+    input.value = '';
   }
 
   window.onload = () => recordState();
 </script>
 </body>
-</html> 
+</html>
