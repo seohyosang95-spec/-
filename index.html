@@ -5,159 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>프리미엄 템플릿 & 이미지 스튜디오 QA</title>
   <style>
-    /* --------------------------------------------------
-       1. 해상도 대응 및 가로 스크롤 방지 (1366x768 / 1920x1080)
-       -------------------------------------------------- */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    /* 1. 해상도 대응 및 가로 스크롤 방지 */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
-      width: 100vw;
-      max-width: 100vw;
-      overflow-x: hidden; /* 가로 스크롤 완전 방지 */
+      width: 100vw; max-width: 100vw; overflow-x: hidden;
       font-family: 'Segoe UI', Arial, sans-serif;
-      background-color: #f4f6f9;
-      color: #333;
+      background: #f4f6f9; color: #333;
     }
-    .app-container {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      max-width: 1920px;
-      margin: 0 auto;
-    }
+    .app-container { display: flex; flex-direction: column; min-height: 100vh; max-width: 1920px; margin: 0 auto; }
+    header { background: #1e1e2f; color: #fff; padding: 12px 20px; font-weight: bold; font-size: 1.1rem; }
 
-    /* Header */
-    header {
-      background: #1e1e2f;
-      color: #fff;
-      padding: 12px 20px;
-      font-weight: bold;
-      font-size: 1.1rem;
-    }
-
-    /* Toolbar */
+    /* 툴바 스타일 */
     .toolbar {
-      background: #ffffff;
-      border-bottom: 1px solid #e0e0e0;
-      padding: 10px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
+      background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 20px;
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
     }
-    .tool-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding-right: 12px;
-      border-right: 1px solid #ddd;
-    }
-    .tool-group:last-child {
-      border-right: none;
-    }
-
-    /* --------------------------------------------------
-       2. 키보드 접근성 (포커스 표시)
-       -------------------------------------------------- */
+    .tool-group { display: flex; align-items: center; gap: 6px; padding-right: 12px; border-right: 1px solid #ddd; }
+    .tool-group:last-child { border-right: none; }
+    
+    /* 2. 접근성 대응 포커스 표시 */
     a.btn-theme, button, select, input {
-      padding: 6px 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background: #fff;
-      font-size: 0.9rem;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
+      padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; background: #fff;
+      font-size: 0.85rem; cursor: pointer; text-decoration: none; color: inherit;
     }
     a.btn-theme:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
-      outline: 2px solid #4A90E2;
-      outline-offset: 2px;
+      outline: 2px solid #4A90E2; outline-offset: 2px;
     }
+    button.primary { background: #4A90E2; color: #fff; border-color: #357abd; }
 
-    /* Main Section */
-    main {
-      flex: 1;
-      display: flex;
-      gap: 20px;
-      padding: 20px;
-    }
-    .canvas-panel, .preview-panel {
-      flex: 1;
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-    }
-    .panel-header {
-      padding: 10px 16px;
-      background: #f8f9fa;
-      border-bottom: 1px solid #e0e0e0;
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      color: #666;
-      font-weight: bold;
-    }
+    /* 메인 영역 */
+    main { flex: 1; display: flex; gap: 20px; padding: 20px; }
+    .canvas-panel, .preview-panel { flex: 1; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; display: flex; flex-direction: column; }
+    .panel-header { padding: 10px 16px; background: #f8f9fa; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; font-weight: bold; }
+    
     .canvas-body {
-      flex: 1;
-      position: relative;
-      min-height: 450px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fafafa;
+      flex: 1; min-height: 500px; display: flex; align-items: center; justify-content: center;
+      background: #e9ecef; position: relative; overflow: hidden;
     }
+    
+    /* 캔버스 요소 */
     #main-canvas {
-      width: 80%;
-      height: 80%;
-      border: 2px dashed #bbb;
-      position: relative;
-      background-color: #ffffff;
-      transition: background 0.3s;
+      width: 640px; height: 360px; background-color: #ffffff;
+      position: relative; border: 1px solid #ccc; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform-origin: center center; transition: background 0.2s, transform 0.2s;
     }
+    #main-canvas:focus { outline: 2px dashed #4A90E2; }
 
-    /* Footer / System Status */
-    footer {
-      background: #1e1e2f;
-      color: #00ffcc;
-      padding: 8px 20px;
-      font-size: 0.85rem;
-      font-family: monospace;
+    /* 캔버스 내부 오브젝트 */
+    .canvas-item {
+      position: absolute; cursor: move; user-select: none;
+      border: 1px dashed transparent; padding: 4px; box-sizing: border-box;
     }
+    .canvas-item.selected { border-color: #4A90E2; }
+    .canvas-item img { width: 100%; height: 100%; display: block; pointer-events: none; }
+
+    /* 미리보기 박스 */
+    #preview-box { width: 100%; height: 100%; position: relative; transform-origin: top left; pointer-events: none; }
+
+    footer { background: #1e1e2f; color: #00ffcc; padding: 8px 20px; font-size: 0.85rem; font-family: monospace; }
   </style>
 </head>
 <body>
 
 <div class="app-container">
-  <header>
-    <div>프리미엄 템플릿 & 이미지 스튜디오 QA</div>
-  </header>
+  <header>프리미엄 템플릿 & 이미지 스튜디오 QA</header>
 
-  <!-- 툴바 영역 (접근성 role/tabindex 적용) -->
   <div class="toolbar">
     <!-- 배경 설정 -->
     <div class="tool-group">
-      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('#ffffff')" onkeydown="handleKeyClick(event, () => setBg('#ffffff'))">⚪ 흰색 단색</a>
-      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('#121212')" onkeydown="handleKeyClick(event, () => setBg('#121212'))">⬛ 다크 단색</a>
-      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('linear-gradient(135deg, #667eea, #764ba2)')" onkeydown="handleKeyClick(event, () => setBg('linear-gradient(135deg, #667eea, #764ba2)'))">🔮 퍼플 그라데이션</a>
-      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('linear-gradient(135deg, #11998e, #38ef7d)')" onkeydown="handleKeyClick(event, () => setBg('linear-gradient(135deg, #11998e, #38ef7d)'))">🌊 에메랄드 그라데이션</a>
+      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('#ffffff')" onkeydown="handleKeyClick(event, () => setBg('#ffffff'))">⚪ 흰색</a>
+      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('#121212')" onkeydown="handleKeyClick(event, () => setBg('#121212'))">⬛ 다크</a>
+      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('linear-gradient(135deg, #667eea, #764ba2)')" onkeydown="handleKeyClick(event, () => setBg('linear-gradient(135deg, #667eea, #764ba2)'))">🔮 퍼플</a>
+      <a role="button" tabindex="0" class="btn-theme" onclick="setBg('linear-gradient(135deg, #11998e, #38ef7d)')" onkeydown="handleKeyClick(event, () => setBg('linear-gradient(135deg, #11998e, #38ef7d)'))">🌊 에메랄드</a>
     </div>
 
     <!-- 규격 및 배율 -->
     <div class="tool-group">
-      <label for="aspect-ratio">비율:</label>
-      <select id="aspect-ratio" onchange="changeAspectRatio(this.value)">
-        <option value="custom">자유 조절</option>
+      <span>비율:</span>
+      <select id="aspect-ratio" onchange="changeRatio(this.value)">
+        <option value="custom">자유</option>
         <option value="1:1">1:1</option>
         <option value="16:9" selected>16:9</option>
         <option value="4:5">4:5</option>
       </select>
-
-      <label for="zoom-scale">배율:</label>
+      <span>배율:</span>
       <select id="zoom-scale" onchange="changeZoom(this.value)">
         <option value="0.5">50%</option>
         <option value="0.75">75%</option>
@@ -166,31 +97,46 @@
       </select>
     </div>
 
-    <!-- Undo / Redo 버튼 추가 -->
+    <!-- 요소 추가 (텍스트 / 이미지) -->
     <div class="tool-group">
-      <button type="button" onclick="undo()" aria-label="실행 취소">↩ Undo (Ctrl+Z)</button>
-      <button type="button" onclick="redo()" aria-label="다시 실행">↪ Redo (Ctrl+Y)</button>
+      <button type="button" class="primary" onclick="addText()">+ 텍스트 추가</button>
+      <input type="file" id="img-file-input" accept="image/png, image/jpeg" style="display:none;" onchange="uploadImage(this)">
+      <button type="button" onclick="document.getElementById('img-file-input').click()">+ 이미지 추가</button>
     </div>
 
-    <!-- 파일 관련 -->
+    <!-- 텍스트/요소 스타일 변경 -->
     <div class="tool-group">
+      <span>글자색:</span>
+      <input type="color" id="text-color" value="#000000" onchange="updateSelectedStyle('color', this.value)">
+      <span>폰트:</span>
+      <select id="font-family" onchange="updateSelectedStyle('fontFamily', this.value)">
+        <option value="Segoe UI">Default</option>
+        <option value="Arial">Arial</option>
+        <option value="Times New Roman">Serif</option>
+        <option value="Courier New">Monospace</option>
+      </select>
+      <span>크기:</span>
+      <input type="number" id="font-size" value="24" min="10" max="100" style="width: 50px;" onchange="updateSelectedStyle('fontSize', this.value + 'px')">
+    </div>
+
+    <!-- Undo / Redo 및 저장 -->
+    <div class="tool-group">
+      <button type="button" onclick="undo()">↩ Undo</button>
+      <button type="button" onclick="redo()">↪ Redo</button>
       <input type="file" id="json-input" accept=".json" style="display:none;" onchange="safeLoadJSON(this)">
       <button type="button" onclick="document.getElementById('json-input').click()">JSON 불러오기</button>
       <button type="button" onclick="exportJSON()">JSON 저장</button>
     </div>
   </div>
 
-  <!-- 메인 작업 영역 -->
   <main>
     <div class="canvas-panel">
       <div class="panel-header">
-        <span>작업 캔버스 (마우스 드래그 & 방향키 이동 가능)</span>
+        <span>작업 캔버스 (클릭 선택, 드래그 & 방향키 이동, Delete 삭제)</span>
         <span>MAIN CANVAS</span>
       </div>
       <div class="canvas-body">
-        <div id="main-canvas" tabindex="0">
-          <!-- 오브젝트가 배치되는 영역 -->
-        </div>
+        <div id="main-canvas" tabindex="0" onclick="deselectAll(event)"></div>
       </div>
     </div>
 
@@ -199,46 +145,53 @@
         <span>실시간 미리보기</span>
         <span>LIVE PREVIEW</span>
       </div>
-      <div class="canvas-body" style="background:#eee;">
-        <div id="live-preview-box">미리보기 영역</div>
+      <div class="canvas-body">
+        <div id="preview-box"></div>
       </div>
     </div>
   </main>
 
   <footer>
-    <div><span>[SYSTEM]</span> <span id="sys-msg">에디터 준비 완료. 방향키 및 단축키(Ctrl+Z/Ctrl+Y)가 지원됩니다.</span></div>
+    <div><span>[SYSTEM]</span> <span id="sys-msg">에디터 준비 완료. 방향키(1px/10px) 및 Delete 키 조작이 가능합니다.</span></div>
   </footer>
 </div>
 
 <script>
-  // ==================================================
-  // 3. Undo / Redo 상태 관리 로직
-  // ==================================================
+  let selectedElement = null;
+  let activeDrag = null;
+
+  // --------------------------------------------------
+  // 1. Undo / Redo 히스토리 관리
+  // --------------------------------------------------
   const historyStack = [];
   let historyStep = -1;
   const MAX_HISTORY = 30;
-
-  function getCurrentCanvasState() {
-    const canvas = document.getElementById('main-canvas');
-    return {
-      background: canvas.style.background,
-      aspectRatio: document.getElementById('aspect-ratio').value,
-      zoom: document.getElementById('zoom-scale').value,
-      innerHTML: canvas.innerHTML
-    };
-  }
 
   function recordState() {
     try {
       if (historyStep < historyStack.length - 1) {
         historyStack.splice(historyStep + 1);
       }
-      historyStack.push(JSON.stringify(getCurrentCanvasState()));
-      if (historyStack.length > MAX_HISTORY) {
-        historyStack.shift();
-      } else {
-        historyStep++;
-      }
+      const state = {
+        background: document.getElementById('main-canvas').style.background,
+        width: document.getElementById('main-canvas').style.width,
+        height: document.getElementById('main-canvas').style.height,
+        items: Array.from(document.querySelectorAll('.canvas-item')).map(item => ({
+          id: item.id,
+          type: item.dataset.type,
+          left: item.style.left,
+          top: item.style.top,
+          color: item.style.color,
+          fontSize: item.style.fontSize,
+          fontFamily: item.style.fontFamily,
+          content: item.dataset.type === 'text' ? item.innerText : item.querySelector('img').src
+        }))
+      };
+      historyStack.push(JSON.stringify(state));
+      if (historyStack.length > MAX_HISTORY) historyStack.shift();
+      else historyStep++;
+      
+      syncPreview();
     } catch (e) {
       console.error("[QA Error] 상태 기록 실패:", e);
     }
@@ -247,44 +200,170 @@
   function undo() {
     if (historyStep > 0) {
       historyStep--;
-      applyCanvasState(historyStack[historyStep]);
-      updateSysMsg("Undo(실행 취소)가 적용되었습니다.");
+      restoreState(historyStack[historyStep]);
+      updateMsg("Undo가 실행되었습니다.");
     }
   }
 
   function redo() {
     if (historyStep < historyStack.length - 1) {
       historyStep++;
-      applyCanvasState(historyStack[historyStep]);
-      updateSysMsg("Redo(다시 실행)가 적용되었습니다.");
+      restoreState(historyStack[historyStep]);
+      updateMsg("Redo가 실행되었습니다.");
     }
   }
 
-  function applyCanvasState(jsonStr) {
+  function restoreState(jsonStr) {
     try {
       const state = JSON.parse(jsonStr);
       const canvas = document.getElementById('main-canvas');
       canvas.style.background = state.background || '#ffffff';
-      canvas.innerHTML = state.innerHTML || '';
-      document.getElementById('aspect-ratio').value = state.aspectRatio || '16:9';
-      document.getElementById('zoom-scale').value = state.zoom || '1';
+      canvas.style.width = state.width || '640px';
+      canvas.style.height = state.height || '360px';
+      canvas.innerHTML = '';
+
+      state.items.forEach(data => {
+        if (data.type === 'text') renderText(data);
+        else if (data.type === 'image') renderImage(data);
+      });
+      syncPreview();
     } catch (e) {
-      console.error("[QA Error] 상태 적용 중 예외 발생:", e);
+      console.error("[QA Error] 복원 예외 발생:", e);
     }
   }
 
-  // Ctrl+Z / Ctrl+Y 키보드 이벤트
+  // --------------------------------------------------
+  // 2. 텍스트 & 이미지 생성 및 조작
+  // --------------------------------------------------
+  function addText() {
+    const data = {
+      id: 'item_' + Date.now(),
+      type: 'text',
+      left: '50px',
+      top: '50px',
+      color: document.getElementById('text-color').value,
+      fontSize: document.getElementById('font-size').value + 'px',
+      fontFamily: document.getElementById('font-family').value,
+      content: '텍스트를 입력하세요'
+    };
+    renderText(data);
+    recordState();
+  }
+
+  function renderText(data) {
+    const el = document.createElement('div');
+    el.id = data.id;
+    el.className = 'canvas-item';
+    el.dataset.type = 'text';
+    el.innerText = data.content;
+    el.contentEditable = true;
+    
+    Object.assign(el.style, {
+      left: data.left, top: data.top, color: data.color,
+      fontSize: data.fontSize, fontFamily: data.fontFamily
+    });
+
+    attachItemEvents(el);
+    document.getElementById('main-canvas').appendChild(el);
+  }
+
+  function uploadImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+      alert('PNG 또는 JPEG 파일만 업로드할 수 있습니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const data = {
+        id: 'item_' + Date.now(),
+        type: 'image',
+        left: '100px', top: '100px',
+        content: e.target.result
+      };
+      renderImage(data);
+      recordState();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderImage(data) {
+    const el = document.createElement('div');
+    el.id = data.id;
+    el.className = 'canvas-item';
+    el.dataset.type = 'image';
+    
+    const img = document.createElement('img');
+    img.src = data.content;
+    img.style.width = '150px';
+    el.appendChild(img);
+
+    Object.assign(el.style, { left: data.left, top: data.top });
+    attachItemEvents(el);
+    document.getElementById('main-canvas').appendChild(el);
+  }
+
+  function attachItemEvents(el) {
+    el.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      selectElement(el);
+      activeDrag = {
+        startX: e.clientX - el.offsetLeft,
+        startY: e.clientY - el.offsetTop
+      };
+    });
+
+    el.addEventListener('blur', () => recordState());
+  }
+
+  // 드래그 및 방향키 이동
+  window.addEventListener('mousemove', (e) => {
+    if (activeDrag && selectedElement) {
+      selectedElement.style.left = (e.clientX - activeDrag.startX) + 'px';
+      selectedElement.style.top = (e.clientY - activeDrag.startY) + 'px';
+      syncPreview();
+    }
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (activeDrag) {
+      activeDrag = null;
+      recordState();
+    }
+  });
+
   window.addEventListener('keydown', (e) => {
     const activeEl = document.activeElement;
-    const isEditingText = activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable;
-    if (isEditingText) return; // 텍스트 편집 중에는 동작 차단
+    if (activeEl.contentEditable === 'true' || activeEl.tagName === 'INPUT') return;
 
+    if (selectedElement) {
+      const step = e.shiftKey ? 10 : 1;
+      let left = parseInt(selectedElement.style.left) || 0;
+      let top = parseInt(selectedElement.style.top) || 0;
+
+      if (e.key === 'ArrowLeft') left -= step;
+      else if (e.key === 'ArrowRight') left += step;
+      else if (e.key === 'ArrowUp') top -= step;
+      else if (e.key === 'ArrowDown') top += step;
+      else if (e.key === 'Delete') {
+        selectedElement.remove();
+        selectedElement = null;
+        recordState();
+        return;
+      } else return;
+
+      selectedElement.style.left = left + 'px';
+      selectedElement.style.top = top + 'px';
+      e.preventDefault();
+      recordState();
+    }
+
+    // Ctrl+Z / Ctrl+Y 단축키
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-      if (e.shiftKey) {
-        redo();
-      } else {
-        undo();
-      }
+      if (e.shiftKey) redo(); else undo();
       e.preventDefault();
     } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
       redo();
@@ -292,9 +371,50 @@
     }
   });
 
-  // ==================================================
-  // 4. 접근성 키보드 클릭 핸들러 (Enter / Space)
-  // ==================================================
+  // --------------------------------------------------
+  // 3. UI 조작 및 접근성 지원
+  // --------------------------------------------------
+  function selectElement(el) {
+    deselectAll();
+    selectedElement = el;
+    el.classList.add('selected');
+    if (el.dataset.type === 'text') {
+      document.getElementById('text-color').value = rgbToHex(el.style.color);
+      document.getElementById('font-size').value = parseInt(el.style.fontSize) || 24;
+      document.getElementById('font-family').value = el.style.fontFamily || 'Segoe UI';
+    }
+  }
+
+  function deselectAll(e) {
+    if (e && e.target !== document.getElementById('main-canvas')) return;
+    document.querySelectorAll('.canvas-item').forEach(el => el.classList.remove('selected'));
+    selectedElement = null;
+  }
+
+  function updateSelectedStyle(prop, val) {
+    if (selectedElement && selectedElement.dataset.type === 'text') {
+      selectedElement.style[prop] = val;
+      recordState();
+    }
+  }
+
+  function setBg(color) {
+    document.getElementById('main-canvas').style.background = color;
+    recordState();
+  }
+
+  function changeRatio(val) {
+    const canvas = document.getElementById('main-canvas');
+    if (val === '1:1') { canvas.style.width = '400px'; canvas.style.height = '400px'; }
+    else if (val === '16:9') { canvas.style.width = '640px'; canvas.style.height = '360px'; }
+    else if (val === '4:5') { canvas.style.width = '360px'; canvas.style.height = '450px'; }
+    recordState();
+  }
+
+  function changeZoom(val) {
+    document.getElementById('main-canvas').style.transform = `scale(${val})`;
+  }
+
   function handleKeyClick(event, callback) {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -302,86 +422,58 @@
     }
   }
 
-  // ==================================================
-  // 5. 안전한 배경 변경 및 예외 처리 (Console Error 방지)
-  // ==================================================
-  function setBg(bgStyle) {
+  function syncPreview() {
+    const canvas = document.getElementById('main-canvas');
+    const previewBox = document.getElementById('preview-box');
+    previewBox.innerHTML = canvas.innerHTML;
+    previewBox.style.background = canvas.style.background;
+    previewBox.style.width = canvas.style.width;
+    previewBox.style.height = canvas.style.height;
+  }
+
+  function updateMsg(msg) {
+    document.getElementById('sys-msg').innerText = msg;
+  }
+
+  function rgbToHex(rgb) {
+    if (!rgb) return '#000000';
+    const res = rgb.match(/\d+/g);
+    return res ? "#" + res.slice(0, 3).map(x => (+x).toString(16).padStart(2, '0')).join('') : rgb;
+  }
+
+  // JSON 저장 및 불러오기 예외 처리
+  function exportJSON() {
     try {
-      const canvas = document.getElementById('main-canvas');
-      canvas.style.background = bgStyle;
-      recordState();
+      const jsonStr = historyStack[historyStep];
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'template_qa.json';
+      a.click();
     } catch (e) {
-      console.error("[QA Error] 배경 변경 중 오류 발생:", e);
+      console.error("[QA Error] JSON 저장 오류:", e);
     }
   }
 
-  function changeAspectRatio(ratio) {
-    try {
-      const canvas = document.getElementById('main-canvas');
-      if (ratio === '1:1') canvas.style.aspectRatio = '1 / 1';
-      else if (ratio === '16:9') canvas.style.aspectRatio = '16 / 9';
-      else if (ratio === '4:5') canvas.style.aspectRatio = '4 / 5';
-      else canvas.style.aspectRatio = 'unset';
-      recordState();
-    } catch (e) {
-      console.error("[QA Error] 화면비 변경 오류:", e);
-    }
-  }
-
-  function changeZoom(scale) {
-    try {
-      const canvas = document.getElementById('main-canvas');
-      canvas.style.transform = `scale(${scale})`;
-      recordState();
-    } catch (e) {
-      console.error("[QA Error] 배율 변경 오류:", e);
-    }
-  }
-
-  // JSON 로드 및 예외 안전 처리
-  function safeLoadJSON(fileInput) {
-    const file = fileInput.files[0];
+  function safeLoadJSON(input) {
+    const file = input.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = function(e) {
       try {
-        const parsed = JSON.parse(e.target.result);
-        applyCanvasState(e.target.result);
+        restoreState(e.target.result);
         recordState();
-        updateSysMsg("JSON 파일을 성공적으로 불러왔습니다.");
+        updateMsg("JSON 복원이 완료되었습니다.");
       } catch (err) {
-        console.error("[QA Error] 올바르지 않은 JSON 데이터:", err);
-        alert("유효한 JSON 템플릿 파일이 아닙니다.");
+        console.error("[QA Error] JSON 읽기 예외:", err);
+        alert("유효하지 않은 JSON 파일입니다.");
       }
-    };
-    reader.onerror = function(err) {
-      console.error("[QA Error] 파일 읽기 실패:", err);
     };
     reader.readAsText(file);
   }
 
-  function exportJSON() {
-    try {
-      const state = getCurrentCanvasState();
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'template.json';
-      a.click();
-    } catch (e) {
-      console.error("[QA Error] JSON 저장 실패:", e);
-    }
-  }
-
-  function updateSysMsg(msg) {
-    document.getElementById('sys-msg').innerText = msg;
-  }
-
-  // 초기 상태 저장
-  window.onload = function() {
-    recordState();
-  };
+  window.onload = () => recordState();
 </script>
 </body>
 </html>
