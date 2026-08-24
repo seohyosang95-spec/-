@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>프리미엄 템플릿 & 이미지 스튜디오 QA</title>
-  <!-- 아이콘 팩 (FontAwesome) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* === CSS 리셋 및 글로벌 변수 === */
     :root {
       --bg-gradient: linear-gradient(135deg, #2D1B69 0%, #16123D 40%, #091024 100%);
       --surface: rgba(255, 255, 255, 0.08);
@@ -20,10 +18,10 @@
       --accent-green: #10b981;
       --accent-red: #ef4444;
       --border: rgba(255, 255, 255, 0.15);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; font-family: 'Segoe UI', Roboto, sans-serif; }
 
     body {
       background: var(--bg-gradient);
@@ -35,62 +33,44 @@
       padding: 20px;
     }
 
-    /* === 앱 컨테이너 === */
     .app-container {
       width: 100%;
-      max-width: 1200px;
+      max-width: 1300px;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    /* === 헤더 === */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 0;
     }
 
-    .header-title {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
+    .header-title { font-size: 20px; font-weight: 700; }
 
-    .status-badge {
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 12px;
-      background: var(--accent-green);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    /* === 툴바 (tool-group) === */
     .toolbar {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
     }
 
     .tool-group {
       background: var(--surface-card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 12px;
+      padding: 10px 12px;
       display: flex;
       align-items: center;
       gap: 8px;
       box-shadow: var(--shadow-lg);
     }
 
-    /* 버튼 스타일 */
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 14px;
+      padding: 7px 12px;
       border-radius: 8px;
       border: 1px solid var(--border);
       background: var(--surface);
@@ -101,26 +81,12 @@
       transition: all 0.2s;
     }
 
-    .btn:hover:not(:disabled) {
-      background: var(--surface-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn:active:not(:disabled) { transform: translateY(0); }
-
-    .btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      border: none;
-    }
-
+    .btn:hover:not(:disabled) { background: var(--surface-hover); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); border: none; }
     .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn-danger { background: var(--accent-red); border: none; }
 
-    /* 드롭다운 버튼 */
     .dropdown { position: relative; }
     .dropdown-content {
       display: none;
@@ -130,56 +96,34 @@
       background: var(--surface-card);
       border: 1px solid var(--border);
       border-radius: 8px;
-      width: 160px;
+      width: 170px;
       z-index: 100;
       margin-top: 6px;
       box-shadow: var(--shadow-lg);
     }
     .dropdown.active .dropdown-content { display: block; }
-    
     .dropdown-item {
       display: flex;
       align-items: center;
       gap: 8px;
       padding: 10px;
       color: var(--text-main);
-      text-decoration: none;
       font-size: 13px;
       cursor: pointer;
     }
     .dropdown-item:hover { background: var(--surface); }
 
-    /* 슬라이더 그룹 */
-    .slider-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-    input[type=range] {
-      appearance: none;
-      width: 80px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 5px;
-      height: 4px;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      appearance: none;
-      width: 12px;
-      height: 12px;
-      background: var(--primary);
-      border-radius: 50%;
-      cursor: pointer;
-    }
-    .slider-val {
-      width: 30px;
-      text-align: right;
-      color: var(--text-main);
-      font-weight: 600;
+    .input-num {
+      width: 60px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+      font-size: 13px;
+      text-align: center;
     }
 
-    /* 선택박스 스타일 */
     select.btn {
       appearance: none;
       padding-right: 24px;
@@ -189,14 +133,12 @@
       background-size: 14px;
     }
 
-    /* === 워크스페이스 레이아웃 (그리드) === */
     .workspace {
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 16px;
     }
 
-    /* 카드 기본 스타일 */
     .card {
       background: rgba(30, 27, 75, 0.5);
       border: 1px solid var(--border);
@@ -211,48 +153,39 @@
       align-items: center;
       font-size: 12px;
       color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
       font-weight: 600;
       margin-bottom: 12px;
     }
 
-    /* 캔버스 래퍼 (정렬용) */
+    /* 메인 캔버스 영역 */
     .canvas-wrapper {
       display: flex;
       justify-content: center;
       align-items: center;
       background: #091024;
       border-radius: 12px;
-      padding: 10px;
-      overflow: hidden;
-      min-height: 380px;
-    }
-
-    /* 메인 캔버스 스타일 (가변 크기) */
-    .canvas-box {
-      background: #fff;
+      padding: 20px;
+      overflow: auto;
+      min-height: 440px;
+      max-height: 600px;
       position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      transition: width 0.2s, height 0.2s, background-image 0.2s;
-      background-size: contain;
+    }
+
+    .canvas-zoom-container {
+      transform-origin: center center;
+      transition: transform 0.1s linear;
+    }
+
+    .canvas-box {
+      background: #ffffff;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
+      overflow: hidden;
     }
 
-    .canvas-placeholder {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      color: #94a3b8;
-    }
-    .canvas-placeholder i { font-size: 40px; margin-bottom: 10px; }
-    .canvas-placeholder p { font-size: 14px; font-weight: 500; }
-
-    /* 미리보기 캔버스 (고정 크기 축소형) */
+    /* 미리보기 */
     .preview-canvas-wrapper {
       display: flex;
       justify-content: center;
@@ -260,65 +193,51 @@
       background: #091024;
       border-radius: 12px;
       padding: 10px;
-      height: 200px;
+      height: 220px;
       overflow: hidden;
     }
 
     .preview-canvas-box {
       background: #fff;
-      width: 100%;
-      height: 100%;
-      max-width: 200px;
-      max-height: 200px;
+      width: 200px;
+      height: 200px;
       position: relative;
       overflow: hidden;
-      transform-origin: center center;
     }
 
-    /* === 객체 스타일 (도형, 텍스트) === */
+    /* 캔버스 내 요소 (직접 편집 가능) */
     .canvas-object {
       position: absolute;
       cursor: move;
       user-select: none;
+      box-sizing: border-box;
     }
-    .canvas-object.selected { outline: 2px solid var(--primary); }
 
-    .object-rect { background: #333; }
-    .object-circle { background: #333; border-radius: 50%; }
+    .canvas-object.selected {
+      outline: 2px dashed var(--primary);
+      outline-offset: 2px;
+    }
+
+    .object-rect { background: #334155; }
+    .object-circle { background: #334155; border-radius: 50%; }
     .object-text {
-      color: #333;
+      color: #0f172a;
       font-weight: 700;
       font-size: 24px;
-      background: rgba(255,255,255,0.7);
-      padding: 5px 10px;
-      border-radius: 4px;
+      background: rgba(255,255,255,0.85);
+      padding: 4px 10px;
+      border-radius: 6px;
       white-space: nowrap;
+      cursor: text;
     }
 
-    /* === 콘솔 패널 === */
     .console-panel {
       grid-column: 1 / -1;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-family: monospace;
       font-size: 12px;
-      color: #f8fafc;
     }
-
-    .console-header {
-      color: #64748b;
-      font-size: 11px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-
-    .console-logs {
-      max-height: 80px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+    .console-logs { max-height: 70px; overflow-y: auto; }
     .log-entry { display: flex; gap: 6px; }
-    .log-entry span:first-child { color: var(--text-muted); }
 
     input[type="file"] { display: none; }
   </style>
@@ -326,175 +245,153 @@
 <body>
 
 <div class="app-container">
-  <!-- 헤더 -->
   <header class="header">
     <div class="header-title">프리미엄 템플릿 & 이미지 스튜디오 QA</div>
-    <div class="status-badge">LIVE QA</div>
   </header>
 
-  <!-- 툴바 -->
+  <!-- 툴바 영역 -->
   <div class="toolbar">
-    <!-- 이미지/객체 추가 -->
+    <!-- 이미지 및 기본 배경 -->
     <div class="tool-group">
       <button class="btn btn-primary" onclick="document.getElementById('imageInput').click()">
         <i class="fa-solid fa-image"></i> 이미지 선택
       </button>
       <input type="file" id="imageInput" accept="image/png, image/jpeg">
 
-      <div class="dropdown" id="objectDropdown">
-        <button class="btn" onclick="toggleDropdown('objectDropdown')">
-          <i class="fa-solid fa-cubes"></i> 기본 이미지 추가 <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i>
+      <div class="dropdown" id="bgDropdown">
+        <button class="btn" onclick="toggleDropdown('bgDropdown')">
+          <i class="fa-solid fa-paint-roller"></i> 기본 배경 <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="dropdown-content">
-          <a class="dropdown-item" onclick="addObject('rect')"><i class="fa-solid fa-square"></i> 기본 직사각형</a>
-          <a class="dropdown-item" onclick="addObject('circle')"><i class="fa-solid fa-circle"></i> 기본 원형</a>
+          <a class="dropdown-item" onclick="setPresetBackground('#ffffff')">⚪ 흰색 단색</a>
+          <a class="dropdown-item" onclick="setPresetBackground('#1e293b')">⬛ 다크 단색</a>
+          <a class="dropdown-item" onclick="setPresetBackground('linear-gradient(135deg, #6366f1, #a855f7)')">🔮 퍼플 그라데이션</a>
+          <a class="dropdown-item" onclick="setPresetBackground('linear-gradient(135deg, #3b82f6, #10b981)')">🌊 에메랄드 그라데이션</a>
         </div>
       </div>
     </div>
 
-    <!-- 크기 조절 (가로/세로) -->
+    <!-- 가로/세로 수치 직접 입력 -->
     <div class="tool-group">
-      <div class="slider-group">
-        <span>폭 (W)</span>
-        <input type="range" id="widthSlider" min="200" max="1000" value="480">
-        <span class="slider-val" id="widthVal">480</span>
-      </div>
-      <div class="slider-group">
-        <span>높이 (H)</span>
-        <input type="range" id="heightSlider" min="150" max="800" value="270">
-        <span class="slider-val" id="heightVal">270</span>
-      </div>
+      <span style="font-size:12px; color:var(--text-muted);">폭(W):</span>
+      <input type="number" id="widthInput" class="input-num" value="480" min="100" max="1200">
+      <span style="font-size:12px; color:var(--text-muted);">높이(H):</span>
+      <input type="number" id="heightInput" class="input-num" value="270" min="100" max="1200">
     </div>
 
-    <!-- 프리셋 비율 -->
+    <!-- 화면비 / 캔버스 배율(줌) -->
     <div class="tool-group">
       <select id="aspectRatioSelect" class="btn">
-        <option value="custom">자유 조절 (Custom)</option>
+        <option value="custom">자유 조절</option>
         <option value="1:1">1:1 (정사각형)</option>
         <option value="16:9" selected>16:9 (와이드)</option>
         <option value="4:5">4:5 (세로형)</option>
       </select>
+
+      <span style="font-size:12px; color:var(--text-muted); margin-left:5px;">배율:</span>
+      <select id="zoomSelect" class="btn">
+        <option value="0.5">50%</option>
+        <option value="0.75">75%</option>
+        <option value="1" selected>100%</option>
+        <option value="1.25">125%</option>
+        <option value="1.5">150%</option>
+      </select>
     </div>
 
-    <!-- 히스토리 -->
+    <!-- 히스토리 및 요소 추가/삭제 -->
     <div class="tool-group">
       <button id="btnUndo" class="btn" disabled><i class="fa-solid fa-rotate-left"></i></button>
       <button id="btnRedo" class="btn" disabled><i class="fa-solid fa-rotate-right"></i></button>
+      
+      <div class="dropdown" id="objectDropdown">
+        <button class="btn" onclick="toggleDropdown('objectDropdown')">
+          <i class="fa-solid fa-cubes"></i> 도형 추가 <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a class="dropdown-item" onclick="addObject('rect')"><i class="fa-solid fa-square"></i> 직사각형</a>
+          <a class="dropdown-item" onclick="addObject('circle')"><i class="fa-solid fa-circle"></i> 원형</a>
+        </div>
+      </div>
+
+      <button class="btn" onclick="addObject('text')"><i class="fa-solid fa-font"></i> 글씨 추가</button>
+      <button class="btn btn-danger" onclick="deleteSelectedObject()"><i class="fa-solid fa-trash"></i> 삭제</button>
     </div>
 
-    <!-- 텍스트 -->
+    <!-- JSON -->
     <div class="tool-group">
-      <button class="btn" onclick="addObject('text')">
-        <i class="fa-solid fa-font"></i> 글씨 추가
-      </button>
-    </div>
-
-    <!-- 데이터 (JSON) -->
-    <div class="tool-group">
-      <button class="btn" onclick="exportJSON()">
-        <i class="fa-solid fa-download"></i> JSON 내보내기
-      </button>
-      <button class="btn" onclick="document.getElementById('jsonInput').click()">
-        <i class="fa-solid fa-upload"></i> JSON 불러오기
-      </button>
+      <button class="btn" onclick="exportJSON()"><i class="fa-solid fa-download"></i> 내보내기</button>
+      <button class="btn" onclick="document.getElementById('jsonInput').click()"><i class="fa-solid fa-upload"></i> 불러오기</button>
       <input type="file" id="jsonInput" accept=".json">
     </div>
   </div>
 
-  <!-- 워크스페이스 (캔버스 & 미리보기) -->
+  <!-- 워크스페이스 -->
   <main class="workspace">
-    <!-- 작업 캔버스 -->
     <div class="card">
       <div class="card-header">
-        <span>작업 캔버스</span>
+        <span>작업 캔버스 (요소를 클릭하여 이동/수정)</span>
         <span>MAIN CANVAS</span>
       </div>
       <div class="canvas-wrapper">
-        <div id="canvasBox" class="canvas-box ratio-16-9" style="width: 480px; height: 270px;">
-          <div id="placeholder" class="canvas-placeholder">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-            <p>이미지를 업로드하거나 객체를 추가하세요</p>
+        <div id="zoomContainer" class="canvas-zoom-container">
+          <div id="canvasBox" class="canvas-box" style="width: 480px; height: 270px;">
+            <!-- 객체 동적 생성 -->
           </div>
-          <!-- 객체들이 여기에 동적으로 추가됨 -->
         </div>
       </div>
     </div>
 
-    <!-- 라이브 미리보기 -->
     <div class="card">
       <div class="card-header">
-        <span>라이브 미리보기</span>
-        <span>실시간 미리보기</span>
+        <span>실시간 라이브 미리보기</span>
+        <span>LIVE PREVIEW</span>
       </div>
       <div class="preview-canvas-wrapper">
-        <div id="previewCanvasBox" class="preview-canvas-box">
-          <!-- 작업 캔버스 내용이 여기에 실시간으로 복제됨 -->
-        </div>
+        <div id="previewCanvasBox" class="preview-canvas-box"></div>
       </div>
     </div>
 
-    <!-- 콘솔 로그 패널 -->
     <footer class="card console-panel">
-      <div class="console-header">SYSTEM AUDIT LOGS</div>
       <div id="consoleLogs" class="console-logs">
-        <div class="log-entry">
-          <span>[SYSTEM]</span>
-          <span>스튜디오 QA 에디터가 준비되었습니다. 테스트를 시작하세요.</span>
-        </div>
+        <div class="log-entry"><span>[SYSTEM]</span><span>캔버스 내 드래그 및 이동 기능이 활성화되었습니다.</span></div>
       </div>
     </footer>
   </main>
 </div>
 
 <script>
-  // ==========================================
-  // 글로벌 상태 및 히스토리 엔진
-  // ==========================================
-  const canvasConfig = {
-    minW: 200, maxW: 1000,
-    minH: 150, maxH: 800
-  };
-
+  // 애플리케이션 상태
   const editorState = {
     canvasW: 480,
     canvasH: 270,
+    zoom: 1,
     aspectRatio: '16:9',
-    backgroundImage: null,
-    objects: [] // {id, type, x, y, w, h, text}
+    background: '#ffffff',
+    selectedId: null,
+    objects: []
   };
 
-  // Undo/Redo 용 히스토리
   const history = {
     past: [],
     present: JSON.parse(JSON.stringify(editorState)),
     future: []
   };
 
-  // ==========================================
-  // DOM 요소 참조
-  // ==========================================
+  // DOM Elements
   const canvasBox = document.getElementById('canvasBox');
+  const zoomContainer = document.getElementById('zoomContainer');
   const previewCanvasBox = document.getElementById('previewCanvasBox');
-  const widthSlider = document.getElementById('widthSlider');
-  const heightSlider = document.getElementById('heightSlider');
-  const widthVal = document.getElementById('widthVal');
-  const heightVal = document.getElementById('heightVal');
+  const widthInput = document.getElementById('widthInput');
+  const heightInput = document.getElementById('heightInput');
+  const zoomSelect = document.getElementById('zoomSelect');
   const aspectRatioSelect = document.getElementById('aspectRatioSelect');
-  const placeholder = document.getElementById('placeholder');
   const consoleLogs = document.getElementById('consoleLogs');
-  const imageInput = document.getElementById('imageInput');
   const btnUndo = document.getElementById('btnUndo');
   const btnRedo = document.getElementById('btnRedo');
 
-  // ==========================================
-  // 핵심 유틸리티 함수
-  // ==========================================
-  function writeLog(message) {
-    const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
-    const logEntry = document.createElement('div');
-    logEntry.className = 'log-entry';
-    logEntry.innerHTML = `<span>[${time}]</span><span>${message}</span>`;
-    consoleLogs.appendChild(logEntry);
+  function writeLog(msg) {
+    const time = new Date().toLocaleTimeString();
+    consoleLogs.innerHTML += `<div class="log-entry"><span>[${time}]</span><span>${msg}</span></div>`;
     consoleLogs.scrollTop = consoleLogs.scrollHeight;
   }
 
@@ -502,249 +399,225 @@
     document.getElementById(id).classList.toggle('active');
   }
 
-  // 화면 외부 클릭 시 드롭다운 닫기
-  window.onclick = function(event) {
-    if (!event.target.matches('.btn') && !event.target.matches('.btn *')) {
-      const dropdowns = document.getElementsByClassName("dropdown");
-      for (let d of dropdowns) { d.classList.remove('active'); }
+  window.onclick = (e) => {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
     }
-  }
-
-  // ==========================================
-  // 히스토리 및 Undo/Redo 구현
-  // ==========================================
-  function updateHistoryButtons() {
-    btnUndo.disabled = history.past.length === 0;
-    btnRedo.disabled = history.future.length === 0;
-  }
+  };
 
   function commitState(newState) {
     history.past.push(JSON.parse(JSON.stringify(history.present)));
     history.present = JSON.parse(JSON.stringify(newState));
     history.future = [];
-    updateHistoryButtons();
-    renderEditor(history.present);
+    btnUndo.disabled = false;
+    btnRedo.disabled = true;
+    render(history.present);
   }
 
-  btnUndo.addEventListener('click', () => {
-    if (history.past.length === 0) return;
+  btnUndo.onclick = () => {
+    if (!history.past.length) return;
     history.future.unshift(JSON.parse(JSON.stringify(history.present)));
     history.present = history.past.pop();
-    updateHistoryButtons();
-    renderEditor(history.present);
-    writeLog('실행 취소(Undo) 완료');
-  });
+    btnUndo.disabled = !history.past.length;
+    btnRedo.disabled = false;
+    render(history.present);
+  };
 
-  btnRedo.addEventListener('click', () => {
-    if (history.future.length === 0) return;
+  btnRedo.onclick = () => {
+    if (!history.future.length) return;
     history.past.push(JSON.parse(JSON.stringify(history.present)));
     history.present = history.future.shift();
-    updateHistoryButtons();
-    renderEditor(history.present);
-    writeLog('다시 실행(Redo) 완료');
-  });
+    btnUndo.disabled = false;
+    btnRedo.disabled = !history.future.length;
+    render(history.present);
+  };
 
-  // ==========================================
-  // 캔버스 크기 및 비율 조절
-  // ==========================================
-  function updateCanvasSizeDisplay(w, h) {
-    widthSlider.value = w;
-    heightSlider.value = h;
-    widthVal.textContent = w;
-    heightVal.textContent = h;
-  }
+  // 폭/높이 직접 수정
+  widthInput.onchange = (e) => setSize(parseInt(e.target.value), history.present.canvasH);
+  heightInput.onchange = (e) => setSize(history.present.canvasW, parseInt(e.target.value));
 
-  function setCanvasSize(w, h, skipHistory = false) {
-    const nextW = Math.max(canvasConfig.minW, Math.min(canvasConfig.minW, Math.min(canvasConfig.maxW, w)));
-    const nextH = Math.max(canvasConfig.minH, Math.min(canvasConfig.maxH, h));
-
-    if (!skipHistory) {
-      const nextState = { ...history.present, canvasW: nextW, canvasH: nextH, aspectRatio: 'custom' };
-      commitState(nextState);
-    } else {
-      renderEditor(history.present);
-    }
-    updateCanvasSizeDisplay(nextW, nextH);
-  }
-
-  widthSlider.addEventListener('input', (e) => setCanvasSize(parseInt(e.target.value), history.present.canvasH));
-  heightSlider.addEventListener('input', (e) => setCanvasSize(history.present.canvasW, parseInt(e.target.value)));
-
-  // 비율 설정
-  aspectRatioSelect.addEventListener('change', (e) => {
-    const ratio = e.target.value;
-    const nextState = { ...history.present, aspectRatio: ratio };
-    
-    if (ratio === '1:1') { nextState.canvasW = 400; nextState.canvasH = 400; }
-    else if (ratio === '16:9') { nextState.canvasW = 480; nextState.canvasH = 270; }
-    else if (ratio === '4:5') { nextState.canvasW = 320; nextState.canvasH = 400; }
-
+  function setSize(w, h) {
+    const nextState = { ...history.present, canvasW: w, canvasH: h, aspectRatio: 'custom' };
     commitState(nextState);
-    updateCanvasSizeDisplay(nextState.canvasW, nextState.canvasH);
-    writeLog(`화면비 설정 변경: ${ratio}`);
-  });
+  }
 
-  // ==========================================
-  // 이미지 로드 및 객체 추가
-  // ==========================================
-  imageInput.addEventListener('change', (e) => {
+  // 화면비
+  aspectRatioSelect.onchange = (e) => {
+    const ratio = e.target.value;
+    let w = history.present.canvasW, h = history.present.canvasH;
+    if (ratio === '1:1') { w = 400; h = 400; }
+    else if (ratio === '16:9') { w = 480; h = 270; }
+    else if (ratio === '4:5') { w = 320; h = 400; }
+    commitState({ ...history.present, canvasW: w, canvasH: h, aspectRatio: ratio });
+  };
+
+  // 캔버스 배율(줌)
+  zoomSelect.onchange = (e) => {
+    const zoom = parseFloat(e.target.value);
+    history.present.zoom = zoom;
+    zoomContainer.style.transform = `scale(${zoom})`;
+    writeLog(`배율 변경: ${zoom * 100}%`);
+  };
+
+  // 기본 배경 지정
+  function setPresetBackground(bg) {
+    commitState({ ...history.present, background: bg });
+    writeLog('배경 설정 변경됨');
+  }
+
+  // 이미지 업로드
+  document.getElementById('imageInput').onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const nextState = { ...history.present, backgroundImage: event.target.result };
-      commitState(nextState);
-      writeLog(`이미지 로드 완료: ${file.name}`);
+    reader.onload = (evt) => {
+      commitState({ ...history.present, background: `url(${evt.target.result})` });
+      writeLog(`배경 이미지 로드: ${file.name}`);
     };
     reader.readAsDataURL(file);
-    imageInput.value = ''; // 같은 파일 다시 로드 가능
-  });
+  };
 
+  // 객체 추가
   function addObject(type) {
-    const id = 'obj_' + Date.now();
     const newObj = {
-      id: id,
-      type: type,
-      x: 50, y: 50,
+      id: 'obj_' + Date.now(),
+      type,
+      x: 30, y: 30,
       w: type === 'text' ? null : 100,
       h: type === 'text' ? null : 100,
-      text: type === 'text' ? '샘플 텍스트 수정 가능' : null
+      text: type === 'text' ? '텍스트 입력' : null
     };
-
-    const nextState = { ...history.present, objects: [...history.present.objects, newObj] };
-    commitState(nextState);
-    writeLog(`${type === 'text' ? '텍스트' : type === 'rect' ? '직사각형' : '원형'} 객체 추가됨`);
+    commitState({
+      ...history.present,
+      selectedId: newObj.id,
+      objects: [...history.present.objects, newObj]
+    });
   }
 
-  // ==========================================
-  // 핵심 렌더링 함수 (메인 캔버스 + 미리보기 동기화)
-  // ==========================================
-  function renderEditor(state) {
-    // 1) 메인 캔버스 크기 및 배경
-    canvasBox.style.width = `${state.canvasW}px`;
-    canvasBox.style.height = `${state.canvasH}px`;
-    if (state.backgroundImage) {
-      canvasBox.style.backgroundImage = `url(${state.backgroundImage})`;
-      placeholder.style.display = 'none';
-    } else {
-      canvasBox.style.backgroundImage = 'none';
-      placeholder.style.display = 'block';
+  // 객체 삭제
+  function deleteSelectedObject() {
+    if (!history.present.selectedId) return;
+    const nextObjs = history.present.objects.filter(o => o.id !== history.present.selectedId);
+    commitState({ ...history.present, selectedId: null, objects: nextObjs });
+    writeLog('선택된 요소 삭제됨');
+  }
+
+  // 렌더링 및 드래그 동작
+  function render(state) {
+    canvasBox.style.width = state.canvasW + 'px';
+    canvasBox.style.height = state.canvasH + 'px';
+    canvasBox.style.background = state.background;
+    if (state.background.startsWith('url')) {
+      canvasBox.style.backgroundSize = 'cover';
     }
-    
-    updateCanvasSizeDisplay(state.canvasW, state.canvasH);
+
+    widthInput.value = state.canvasW;
+    heightInput.value = state.canvasH;
     aspectRatioSelect.value = state.aspectRatio;
+    zoomContainer.style.transform = `scale(${state.zoom})`;
 
-    // 2) 메인 캔버스 객체 렌더링
-    // 기존 객체 삭제 (placeholder 제외)
-    const existingObjs = canvasBox.querySelectorAll('.canvas-object');
-    existingObjs.forEach(obj => obj.remove());
-
+    // 기존 요소 제거 후 재생성
+    canvasBox.innerHTML = '';
     state.objects.forEach(obj => {
       const el = document.createElement('div');
       el.id = obj.id;
-      el.className = `canvas-object object-${obj.type}`;
-      el.style.left = `${obj.x}px`;
-      el.style.top = `${obj.y}px`;
+      el.className = `canvas-object object-${obj.type}` + (obj.id === state.selectedId ? ' selected' : '');
+      el.style.left = obj.x + 'px';
+      el.style.top = obj.y + 'px';
 
       if (obj.type === 'text') {
         el.textContent = obj.text;
-        el.contentEditable = true; // 텍스트 편집 가능하게
-        // 텍스트 편집 완료 시 상태 저장
+        el.contentEditable = true;
         el.onblur = (e) => {
-          if (e.target.textContent !== obj.text) {
-            updateObjectText(obj.id, e.target.textContent);
-          }
+          obj.text = e.target.textContent;
+          syncPreview();
         };
       } else {
-        el.style.width = `${obj.w}px`;
-        el.style.height = `${obj.h}px`;
+        el.style.width = obj.w + 'px';
+        el.style.height = obj.h + 'px';
       }
-      
+
+      // 작업 캔버스 내부 드래그 구현
+      el.onmousedown = (e) => {
+        e.stopPropagation();
+        history.present.selectedId = obj.id;
+        render(history.present);
+
+        let startX = e.clientX;
+        let startY = e.clientY;
+        let initX = obj.x;
+        let initY = obj.y;
+
+        function onMouseMove(me) {
+          const dx = (me.clientX - startX) / state.zoom;
+          const dy = (me.clientY - startY) / state.zoom;
+          obj.x = initX + dx;
+          obj.y = initY + dy;
+          el.style.left = obj.x + 'px';
+          el.style.top = obj.y + 'px';
+          syncPreview();
+        }
+
+        function onMouseUp() {
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      };
+
       canvasBox.appendChild(el);
-      // 간단한 드래그 기능 추가 (여기서는 코드를 간소화하기 위해 생략, 필요시 추가 구현)
     });
 
-    // 3) 라이브 미리보기 동기화 (HTML 복제)
-    syncLivePreview();
+    syncPreview();
   }
 
-  function updateObjectText(id, newText) {
-    const objects = history.present.objects.map(obj => 
-      obj.id === id ? { ...obj, text: newText } : obj
-    );
-    const nextState = { ...history.present, objects: objects };
-    commitState(nextState); // 텍스트 변경도 히스토리에 기록
-    writeLog('텍스트 내용 수정됨');
-  }
+  // 캔버스 빈 곳 클릭 시 선택 해제
+  canvasBox.onclick = (e) => {
+    if (e.target === canvasBox) {
+      history.present.selectedId = null;
+      render(history.present);
+    }
+  };
 
-  // 메인 캔버스의 HTML 내용을 가져와서 미리보기 캔버스에 복제
-  function syncLivePreview() {
+  // 실시간 라이브 미리보기 동기화
+  function syncPreview() {
     previewCanvasBox.innerHTML = '';
-    
-    // 메인 캔버스의 복사본 생성
     const clone = canvasBox.cloneNode(true);
-    clone.id = 'previewCanvasClone';
-    clone.style.transformOrigin = '0 0'; // 좌상단 기준 축소
-    
-    // 미리보기 박스 크기 (고정)
-    const maxP = 200;
-    
-    // 축소 비율 계산 (가로/세로 중 더 많이 줄어야 하는 비율 선택)
-    const scale = Math.min(maxP / history.present.canvasW, maxP / history.present.canvasH);
-    
+    const scale = Math.min(200 / history.present.canvasW, 200 / history.present.canvasH);
+
     clone.style.transform = `scale(${scale})`;
+    clone.style.transformOrigin = '0 0';
     clone.style.position = 'absolute';
-    clone.style.top = `${(maxP - history.present.canvasH * scale) / 2}px`; // 중앙 정렬
-    clone.style.left = `${(maxP - history.present.canvasW * scale) / 2}px`;
-    
-    // 미리보기에서는 편집 불가능하게
-    clone.querySelectorAll('[contenteditable]').forEach(el => el.contentEditable = false);
+    clone.style.top = `${(200 - history.present.canvasH * scale) / 2}px`;
+    clone.style.left = `${(200 - history.present.canvasW * scale) / 2}px`;
 
     previewCanvasBox.appendChild(clone);
   }
 
-  // ==========================================
-  // 데이터 (JSON) 처리
-  // ==========================================
+  // JSON 저장/불러오기
   function exportJSON() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(history.present, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `studio_qa_template_${Date.now()}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-    writeLog('프로젝트 데이터를 JSON으로 내보냈습니다.');
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(history.present));
+    const a = document.createElement('a');
+    a.href = dataStr;
+    a.download = `template_${Date.now()}.json`;
+    a.click();
   }
 
-  document.getElementById('jsonInput').addEventListener('change', (e) => {
+  document.getElementById('jsonInput').onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const importedState = JSON.parse(event.target.result);
-        if (!importedState.canvasW || !importedState.objects) throw new Error("잘못된 형식");
-        
-        commitState(importedState); // 불러온 상태로 스냅샷 저장
-        writeLog(`JSON 프로젝트 로드 완료: ${file.name}`);
-      } catch (err) {
-        writeLog(`JSON 불러오기 실패 (유효하지 않은 파일 형식)`, 'error');
-        alert('⚠️ 유효하지 않은 JSON 프로젝트 파일입니다.');
-      }
-      e.target.value = '';
+    reader.onload = (evt) => {
+      commitState(JSON.parse(evt.target.result));
+      writeLog('JSON 데이터 불러오기 완료');
     };
     reader.readAsText(file);
-  });
+  };
 
-  // ==========================================
-  // 초기화 렌더링
-  // ==========================================
-  renderEditor(history.present);
-
+  // 최초 초기화
+  render(history.present);
 </script>
-
 </body>
 </html>
