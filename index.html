@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>프리미엄 템플릿 & 이미지 스튜디오 QA</title>
+  <title>프리미엄 템플릿 & 이미지 스튜디오 QA (고급 에디터)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -30,15 +30,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 15px;
     }
 
     .app-container {
       width: 100%;
-      max-width: 1300px;
+      max-width: 1350px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
     .header {
@@ -46,36 +46,36 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .header-title { font-size: 20px; font-weight: 700; }
 
+    /* 툴바 UI */
     .toolbar {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
 
     .tool-group {
       background: var(--surface-card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
+      border-radius: 10px;
+      padding: 8px 10px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       box-shadow: var(--shadow-lg);
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 7px 12px;
-      border-radius: 8px;
+      gap: 5px;
+      padding: 6px 10px;
+      border-radius: 6px;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--text-main);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
@@ -96,9 +96,9 @@
       background: var(--surface-card);
       border: 1px solid var(--border);
       border-radius: 8px;
-      width: 170px;
+      width: 160px;
       z-index: 100;
-      margin-top: 6px;
+      margin-top: 4px;
       box-shadow: var(--shadow-lg);
     }
     .dropdown.active .dropdown-content { display: block; }
@@ -106,44 +106,54 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 10px;
+      padding: 8px 10px;
       color: var(--text-main);
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
     }
     .dropdown-item:hover { background: var(--surface); }
 
     .input-num {
-      width: 60px;
-      padding: 5px 8px;
-      border-radius: 6px;
+      width: 50px;
+      padding: 4px;
+      border-radius: 4px;
       border: 1px solid var(--border);
       background: rgba(0,0,0,0.3);
       color: #fff;
-      font-size: 13px;
+      font-size: 12px;
       text-align: center;
+    }
+
+    .color-picker {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      background: none;
     }
 
     select.btn {
       appearance: none;
-      padding-right: 24px;
+      padding-right: 20px;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%20f8fafc'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 8px center;
-      background-size: 14px;
+      background-position: right 6px center;
+      background-size: 12px;
     }
 
+    /* 워크스페이스 레이아웃 */
     .workspace {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 16px;
+      grid-template-columns: 2.2fr 1fr;
+      gap: 12px;
     }
 
     .card {
       background: rgba(30, 27, 75, 0.5);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 12px;
       box-shadow: var(--shadow-lg);
     }
 
@@ -151,24 +161,22 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       font-weight: 600;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
-    /* 메인 캔버스 영역 */
     .canvas-wrapper {
       display: flex;
       justify-content: center;
       align-items: center;
       background: #091024;
-      border-radius: 12px;
-      padding: 20px;
+      border-radius: 8px;
+      padding: 15px;
       overflow: auto;
-      min-height: 440px;
-      max-height: 600px;
-      position: relative;
+      min-height: 420px;
+      max-height: 550px;
     }
 
     .canvas-zoom-container {
@@ -185,15 +193,14 @@
       overflow: hidden;
     }
 
-    /* 미리보기 */
     .preview-canvas-wrapper {
       display: flex;
       justify-content: center;
       align-items: center;
       background: #091024;
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 10px;
-      height: 220px;
+      height: 200px;
       overflow: hidden;
     }
 
@@ -205,38 +212,41 @@
       overflow: hidden;
     }
 
-    /* 캔버스 내 요소 (직접 편집 가능) */
+    /* 캔버스 내부 요소 */
     .canvas-object {
       position: absolute;
       cursor: move;
       user-select: none;
       box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .canvas-object.selected {
-      outline: 2px dashed var(--primary);
+      outline: 2px dashed var(--primary) !important;
       outline-offset: 2px;
     }
 
-    .object-rect { background: #334155; }
-    .object-circle { background: #334155; border-radius: 50%; }
+    /* 도형 클립패스 */
+    .shape-rect { border-radius: 0; }
+    .shape-circle { border-radius: 50%; }
+    .shape-triangle { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+    .shape-star { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+
     .object-text {
-      color: #0f172a;
-      font-weight: 700;
-      font-size: 24px;
-      background: rgba(255,255,255,0.85);
-      padding: 4px 10px;
-      border-radius: 6px;
       white-space: nowrap;
       cursor: text;
+      padding: 2px 6px;
+      background: transparent;
     }
 
     .console-panel {
       grid-column: 1 / -1;
       font-family: monospace;
-      font-size: 12px;
+      font-size: 11px;
     }
-    .console-logs { max-height: 70px; overflow-y: auto; }
+    .console-logs { max-height: 60px; overflow-y: auto; }
     .log-entry { display: flex; gap: 6px; }
 
     input[type="file"] { display: none; }
@@ -251,7 +261,7 @@
 
   <!-- 툴바 영역 -->
   <div class="toolbar">
-    <!-- 이미지 및 기본 배경 -->
+    <!-- 배경 및 이미지 -->
     <div class="tool-group">
       <button class="btn btn-primary" onclick="document.getElementById('imageInput').click()">
         <i class="fa-solid fa-image"></i> 이미지 선택
@@ -271,49 +281,66 @@
       </div>
     </div>
 
-    <!-- 가로/세로 수치 직접 입력 -->
+    <!-- 캔버스 사이즈 & 줌 -->
     <div class="tool-group">
-      <span style="font-size:12px; color:var(--text-muted);">폭(W):</span>
+      <span style="font-size:11px; color:var(--text-muted);">W:</span>
       <input type="number" id="widthInput" class="input-num" value="480" min="100" max="1200">
-      <span style="font-size:12px; color:var(--text-muted);">높이(H):</span>
+      <span style="font-size:11px; color:var(--text-muted);">H:</span>
       <input type="number" id="heightInput" class="input-num" value="270" min="100" max="1200">
-    </div>
 
-    <!-- 화면비 / 캔버스 배율(줌) -->
-    <div class="tool-group">
       <select id="aspectRatioSelect" class="btn">
         <option value="custom">자유 조절</option>
-        <option value="1:1">1:1 (정사각형)</option>
-        <option value="16:9" selected>16:9 (와이드)</option>
-        <option value="4:5">4:5 (세로형)</option>
+        <option value="1:1">1:1</option>
+        <option value="16:9" selected>16:9</option>
+        <option value="4:5">4:5</option>
       </select>
 
-      <span style="font-size:12px; color:var(--text-muted); margin-left:5px;">배율:</span>
+      <span style="font-size:11px; color:var(--text-muted);">배율:</span>
       <select id="zoomSelect" class="btn">
         <option value="0.5">50%</option>
         <option value="0.75">75%</option>
         <option value="1" selected>100%</option>
         <option value="1.25">125%</option>
-        <option value="1.5">150%</option>
       </select>
     </div>
 
-    <!-- 히스토리 및 요소 추가/삭제 -->
+    <!-- 모형 모드 (도형 추가) -->
+    <div class="tool-group">
+      <div class="dropdown" id="shapeDropdown">
+        <button class="btn" onclick="toggleDropdown('shapeDropdown')">
+          <i class="fa-solid fa-shapes"></i> 모형 모드 <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a class="dropdown-item" onclick="addObject('shape', 'rect')"><i class="fa-solid fa-square"></i> 직사각형</a>
+          <a class="dropdown-item" onclick="addObject('shape', 'circle')"><i class="fa-solid fa-circle"></i> 원형</a>
+          <a class="dropdown-item" onclick="addObject('shape', 'triangle')"><i class="fa-solid fa-play" style="transform: rotate(-90deg);"></i> 삼각형</a>
+          <a class="dropdown-item" onclick="addObject('shape', 'star')"><i class="fa-solid fa-star"></i> 별 모양</a>
+        </div>
+      </div>
+      <button class="btn" onclick="addObject('text')"><i class="fa-solid fa-font"></i> 글씨 추가</button>
+    </div>
+
+    <!-- 요소 커스텀 (색상, 폰트 등) -->
+    <div class="tool-group">
+      <span style="font-size:11px; color:var(--text-muted);">색상:</span>
+      <input type="color" id="fillColorPicker" class="color-picker" value="#8b5cf6">
+      
+      <span style="font-size:11px; color:var(--text-muted);">폰트:</span>
+      <select id="fontSelect" class="btn">
+        <option value="Segoe UI">Default</option>
+        <option value="Arial">Arial</option>
+        <option value="Times New Roman">Serif</option>
+        <option value="Courier New">Monospace</option>
+      </select>
+
+      <span style="font-size:11px; color:var(--text-muted);">크기:</span>
+      <input type="number" id="fontSizeInput" class="input-num" value="24" min="10" max="100">
+    </div>
+
+    <!-- 히스토리 & 삭제 -->
     <div class="tool-group">
       <button id="btnUndo" class="btn" disabled><i class="fa-solid fa-rotate-left"></i></button>
       <button id="btnRedo" class="btn" disabled><i class="fa-solid fa-rotate-right"></i></button>
-      
-      <div class="dropdown" id="objectDropdown">
-        <button class="btn" onclick="toggleDropdown('objectDropdown')">
-          <i class="fa-solid fa-cubes"></i> 도형 추가 <i class="fa-solid fa-chevron-down"></i>
-        </button>
-        <div class="dropdown-content">
-          <a class="dropdown-item" onclick="addObject('rect')"><i class="fa-solid fa-square"></i> 직사각형</a>
-          <a class="dropdown-item" onclick="addObject('circle')"><i class="fa-solid fa-circle"></i> 원형</a>
-        </div>
-      </div>
-
-      <button class="btn" onclick="addObject('text')"><i class="fa-solid fa-font"></i> 글씨 추가</button>
       <button class="btn btn-danger" onclick="deleteSelectedObject()"><i class="fa-solid fa-trash"></i> 삭제</button>
     </div>
 
@@ -329,21 +356,19 @@
   <main class="workspace">
     <div class="card">
       <div class="card-header">
-        <span>작업 캔버스 (요소를 클릭하여 이동/수정)</span>
+        <span>작업 캔버스 (마우스 드래그 & 방향키 이동 가능)</span>
         <span>MAIN CANVAS</span>
       </div>
       <div class="canvas-wrapper">
         <div id="zoomContainer" class="canvas-zoom-container">
-          <div id="canvasBox" class="canvas-box" style="width: 480px; height: 270px;">
-            <!-- 객체 동적 생성 -->
-          </div>
+          <div id="canvasBox" class="canvas-box" style="width: 480px; height: 270px;"></div>
         </div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <span>실시간 라이브 미리보기</span>
+        <span>실시간 미리보기</span>
         <span>LIVE PREVIEW</span>
       </div>
       <div class="preview-canvas-wrapper">
@@ -353,14 +378,14 @@
 
     <footer class="card console-panel">
       <div id="consoleLogs" class="console-logs">
-        <div class="log-entry"><span>[SYSTEM]</span><span>캔버스 내 드래그 및 이동 기능이 활성화되었습니다.</span></div>
+        <div class="log-entry"><span>[SYSTEM]</span><span>에디터 준비 완료. 방향키(1px/10px) 및 Delete 키 조작이 가능합니다.</span></div>
       </div>
     </footer>
   </main>
 </div>
 
 <script>
-  // 애플리케이션 상태
+  // 에디터 상태
   const editorState = {
     canvasW: 480,
     canvasH: 270,
@@ -385,6 +410,9 @@
   const heightInput = document.getElementById('heightInput');
   const zoomSelect = document.getElementById('zoomSelect');
   const aspectRatioSelect = document.getElementById('aspectRatioSelect');
+  const fillColorPicker = document.getElementById('fillColorPicker');
+  const fontSelect = document.getElementById('fontSelect');
+  const fontSizeInput = document.getElementById('fontSizeInput');
   const consoleLogs = document.getElementById('consoleLogs');
   const btnUndo = document.getElementById('btnUndo');
   const btnRedo = document.getElementById('btnRedo');
@@ -432,16 +460,14 @@
     render(history.present);
   };
 
-  // 폭/높이 직접 수정
+  // 캔버스 모드 조절
   widthInput.onchange = (e) => setSize(parseInt(e.target.value), history.present.canvasH);
   heightInput.onchange = (e) => setSize(history.present.canvasW, parseInt(e.target.value));
 
   function setSize(w, h) {
-    const nextState = { ...history.present, canvasW: w, canvasH: h, aspectRatio: 'custom' };
-    commitState(nextState);
+    commitState({ ...history.present, canvasW: w, canvasH: h, aspectRatio: 'custom' });
   }
 
-  // 화면비
   aspectRatioSelect.onchange = (e) => {
     const ratio = e.target.value;
     let w = history.present.canvasW, h = history.present.canvasH;
@@ -451,41 +477,39 @@
     commitState({ ...history.present, canvasW: w, canvasH: h, aspectRatio: ratio });
   };
 
-  // 캔버스 배율(줌)
   zoomSelect.onchange = (e) => {
     const zoom = parseFloat(e.target.value);
     history.present.zoom = zoom;
     zoomContainer.style.transform = `scale(${zoom})`;
-    writeLog(`배율 변경: ${zoom * 100}%`);
   };
 
-  // 기본 배경 지정
   function setPresetBackground(bg) {
     commitState({ ...history.present, background: bg });
-    writeLog('배경 설정 변경됨');
   }
 
-  // 이미지 업로드
   document.getElementById('imageInput').onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (evt) => {
       commitState({ ...history.present, background: `url(${evt.target.result})` });
-      writeLog(`배경 이미지 로드: ${file.name}`);
     };
     reader.readAsDataURL(file);
   };
 
-  // 객체 추가
-  function addObject(type) {
+  // 모형 및 객체 추가
+  function addObject(type, shape = 'rect') {
     const newObj = {
       id: 'obj_' + Date.now(),
-      type,
-      x: 30, y: 30,
+      type: type,
+      shape: shape,
+      x: 50, y: 50,
       w: type === 'text' ? null : 100,
       h: type === 'text' ? null : 100,
-      text: type === 'text' ? '텍스트 입력' : null
+      color: fillColorPicker.value,
+      font: fontSelect.value,
+      fontSize: parseInt(fontSizeInput.value),
+      text: type === 'text' ? '샘플 텍스트' : null
     };
     commitState({
       ...history.present,
@@ -494,40 +518,80 @@
     });
   }
 
-  // 객체 삭제
   function deleteSelectedObject() {
     if (!history.present.selectedId) return;
     const nextObjs = history.present.objects.filter(o => o.id !== history.present.selectedId);
     commitState({ ...history.present, selectedId: null, objects: nextObjs });
-    writeLog('선택된 요소 삭제됨');
   }
 
-  // 렌더링 및 드래그 동작
+  // 실시간 커스텀 속성 변경 (색상, 폰트 등)
+  fillColorPicker.oninput = (e) => updateSelectedProp('color', e.target.value);
+  fontSelect.onchange = (e) => updateSelectedProp('font', e.target.value);
+  fontSizeInput.onchange = (e) => updateSelectedProp('fontSize', parseInt(e.target.value));
+
+  function updateSelectedProp(key, value) {
+    if (!history.present.selectedId) return;
+    const nextObjs = history.present.objects.map(obj => {
+      if (obj.id === history.present.selectedId) {
+        return { ...obj, [key]: value };
+      }
+      return obj;
+    });
+    commitState({ ...history.present, objects: nextObjs });
+  }
+
+  // 키보드 조작 이벤트 (방향키, Delete, Ctrl+Z/Y)
+  window.addEventListener('keydown', (e) => {
+    if (e.target.isContentEditable || e.target.tagName === 'INPUT') return;
+
+    // Delete / Backspace
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      deleteSelectedObject();
+    }
+    
+    // 방향키 조작
+    if (history.present.selectedId && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+      e.preventDefault();
+      const step = e.shiftKey ? 10 : 1;
+      const selectedObj = history.present.objects.find(o => o.id === history.present.selectedId);
+      if (!selectedObj) return;
+
+      if (e.key === 'ArrowLeft') selectedObj.x -= step;
+      if (e.key === 'ArrowRight') selectedObj.x += step;
+      if (e.key === 'ArrowUp') selectedObj.y -= step;
+      if (e.key === 'ArrowDown') selectedObj.y += step;
+
+      render(history.present);
+    }
+  });
+
+  // 렌더링 함수
   function render(state) {
     canvasBox.style.width = state.canvasW + 'px';
     canvasBox.style.height = state.canvasH + 'px';
     canvasBox.style.background = state.background;
-    if (state.background.startsWith('url')) {
-      canvasBox.style.backgroundSize = 'cover';
-    }
+    if (state.background.startsWith('url')) canvasBox.style.backgroundSize = 'cover';
 
     widthInput.value = state.canvasW;
     heightInput.value = state.canvasH;
     aspectRatioSelect.value = state.aspectRatio;
     zoomContainer.style.transform = `scale(${state.zoom})`;
 
-    // 기존 요소 제거 후 재생성
     canvasBox.innerHTML = '';
     state.objects.forEach(obj => {
       const el = document.createElement('div');
       el.id = obj.id;
-      el.className = `canvas-object object-${obj.type}` + (obj.id === state.selectedId ? ' selected' : '');
+      el.className = `canvas-object shape-${obj.shape}` + (obj.id === state.selectedId ? ' selected' : '');
       el.style.left = obj.x + 'px';
       el.style.top = obj.y + 'px';
 
       if (obj.type === 'text') {
         el.textContent = obj.text;
         el.contentEditable = true;
+        el.style.color = obj.color;
+        el.style.fontFamily = obj.font;
+        el.style.fontSize = obj.fontSize + 'px';
+        el.className += ' object-text';
         el.onblur = (e) => {
           obj.text = e.target.textContent;
           syncPreview();
@@ -535,9 +599,17 @@
       } else {
         el.style.width = obj.w + 'px';
         el.style.height = obj.h + 'px';
+        el.style.backgroundColor = obj.color;
       }
 
-      // 작업 캔버스 내부 드래그 구현
+      // 속성 툴바 값 세팅
+      if (obj.id === state.selectedId) {
+        fillColorPicker.value = obj.color || '#8b5cf6';
+        if (obj.font) fontSelect.value = obj.font;
+        if (obj.fontSize) fontSizeInput.value = obj.fontSize;
+      }
+
+      // 마우스 드래그 조작
       el.onmousedown = (e) => {
         e.stopPropagation();
         history.present.selectedId = obj.id;
@@ -573,7 +645,6 @@
     syncPreview();
   }
 
-  // 캔버스 빈 곳 클릭 시 선택 해제
   canvasBox.onclick = (e) => {
     if (e.target === canvasBox) {
       history.present.selectedId = null;
@@ -581,7 +652,6 @@
     }
   };
 
-  // 실시간 라이브 미리보기 동기화
   function syncPreview() {
     previewCanvasBox.innerHTML = '';
     const clone = canvasBox.cloneNode(true);
@@ -596,7 +666,6 @@
     previewCanvasBox.appendChild(clone);
   }
 
-  // JSON 저장/불러오기
   function exportJSON() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(history.present));
     const a = document.createElement('a');
@@ -611,12 +680,10 @@
     const reader = new FileReader();
     reader.onload = (evt) => {
       commitState(JSON.parse(evt.target.result));
-      writeLog('JSON 데이터 불러오기 완료');
     };
     reader.readAsText(file);
   };
 
-  // 최초 초기화
   render(history.present);
 </script>
 </body>
